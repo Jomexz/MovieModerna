@@ -16,8 +16,10 @@ import com.example.app_androidmm.database.Usuario;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 import static com.example.app_androidmm.utilidades.Utilidades.mostrarErrorCampo;
+import static com.example.app_androidmm.utilidades.Utilidades.validarFormulario;
 
 public class ControlRecuperar extends AppCompatActivity {
     private static String TAG = "RecuperarControl";
@@ -43,12 +45,13 @@ public class ControlRecuperar extends AppCompatActivity {
         btnValidar.setOnClickListener(view -> {
             String resp = respuesta.getText().toString();
             String pregunta = spPreguntas.getSelectedItem().toString();
-            final boolean[] resultados = {false};
+
             if (!resp.isEmpty()) {
                 new Thread(() -> {
                     connectionManager.executeQuery("select * from usuario where pregunta like '" + pregunta + "' and respuesta like '" + resp + "'", new ConnectionManager.QueryCallback() {
                         @Override
                         public void onQueryCompleted(ResultSet resultSet, int rowsAffected) {
+                            boolean resultados = false;
                             try {
                                 while (resultSet.next()) {
                                     user.setAlias(resultSet.getString("alias"));
@@ -63,62 +66,73 @@ public class ControlRecuperar extends AppCompatActivity {
                                     user.setRespuesta(resultSet.getString("respuesta"));
                                     user.setAvatar((resultSet.getString("avatar")));
                                     Log.d(TAG, user.toString());
-                                    resultados[0] = true;
+                                    resultados = true;
+                                }
+                                if (resultados && pregunta.equals(user.getPregunta()) && resp.equalsIgnoreCase(user.getRespuesta())) {
+                                    System.out.println("Entra en el if!!!!");
+                                    newPass.setEnabled(true);
+                                    newPassRepit.setEnabled(true);
+                                    btnCambiarPass.setEnabled(true);
+
+                                } else {
+                                    Toast.makeText(ControlRecuperar.this, "No existe usuario con esta pregunta y respuesta de recuperación", Toast.LENGTH_SHORT);
                                 }
                             } catch (SQLException e) {
                                 Log.e(TAG, "Error al procesar los resultados: " + e.getMessage());
                             }
                         }
+
                         @Override
                         public void onQueryFailed(String error) {
                             Log.e(TAG, error);
                         }
                     });
                 }).start();
-                if (resultados[0] && pregunta.equals(user.getPregunta()) && resp.equalsIgnoreCase(user.getRespuesta())) {
-                    newPass.setEnabled(true);
-                    newPassRepit.setEnabled(true);
-                    btnCambiarPass.setEnabled(true);
-                    if (newPass.getText().toString().equals(newPassRepit.getText().toString())) {
-                        new Thread(() -> {
-                            connectionManager.executeQuery("update usuario set contrasena='" + newPass.getText().toString() + "' where usuario like '" + user.getAlias(),
-                                    new ConnectionManager.QueryCallback() {
-                                        @Override
-                                        public void onQueryCompleted(ResultSet resultSet, int rowsAffected) {
-                                            try {
-                                                if (resultSet != null) {
-                                                    // Procesar los resultados de la consulta
-                                                    while (resultSet.next()) {
-                                                        String alias = resultSet.getString("alias");
-                                                        String contrasena = resultSet.getString("contrasena");
 
-                                                        // Realizar cualquier acción con los datos obtenidos
-                                                        Log.d(TAG, "Usuario: " + alias + ", Pass: " + contrasena);
-                                                    }
-                                                } else {
-                                                    // Manejar casos de inserción o actualización (rowsAffected contiene el número de filas afectadas)
-                                                    Log.d(TAG, "Filas afectadas: " + rowsAffected);
-                                                    mostrarErrorCampo(ControlRecuperar.this,"La cuenta se ha recuperado con éxito","Recuperación de cuenta");
-                                                    Intent intent = new Intent(ControlRecuperar.this, MainActivity.class);
-                                                    startActivity(intent);
-                                                }
-                                            } catch (SQLException e) {
-                                                Log.e(TAG, "Error al procesar los resultados: " + e.getMessage());
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onQueryFailed(String error) {
-                                            Log.e(TAG, error);
-                                        }
-                                    });
-                        }).start();
-                    }
-                } else {
-                    Toast.makeText(this,"No existe usuario con esta pregunta y respuesta de recuperación", Toast.LENGTH_SHORT);
-                }
             } else {
                 Toast.makeText(this, "No se ha introducido respuesta", Toast.LENGTH_SHORT);
+            }
+        });
+
+        btnCambiarPass.setOnClickListener(view -> {
+            if (newPass.getText().toString().equals(newPassRepit.getText().toString())) {
+                HashMap<String, String> pass = new HashMap<>();
+                pass.put("pass", newPass.getText().toString());
+                if (validarFormulario(pass, this)) {
+                    new Thread(() -> {
+                        connectionManager.executeQuery("update usuario set contrasena='" + newPass.getText().toString() + "' where alias like '" + user.getAlias() + "'",
+                                new ConnectionManager.QueryCallback() {
+                                    @Override
+                                    public void onQueryCompleted(ResultSet resultSet, int rowsAffected) {
+                                        try {
+                                            if (resultSet != null) {
+                                                // Procesar los resultados de la consulta
+                                                while (resultSet.next()) {
+                                                    String alias = resultSet.getString("alias");
+                                                    String contrasena = resultSet.getString("contrasena");
+
+                                                    // Realizar cualquier acción con los datos obtenidos
+                                                    Log.d(TAG, "Usuario: " + alias + ", Pass: " + contrasena);
+                                                }
+                                            } else {
+                                                // Manejar casos de inserción o actualización (rowsAffected contiene el número de filas afectadas)
+                                                Log.d(TAG, "Filas afectadas: " + rowsAffected);
+                                                mostrarErrorCampo(ControlRecuperar.this, "La cuenta se ha recuperado con éxito", "Recuperación de cuenta");
+                                                Intent intent = new Intent(ControlRecuperar.this, MainActivity.class);
+                                                startActivity(intent);
+                                            }
+                                        } catch (SQLException e) {
+                                            Log.e(TAG, "Error al procesar los resultados: " + e.getMessage());
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onQueryFailed(String error) {
+                                        Log.e(TAG, error);
+                                    }
+                                });
+                    }).start();
+                }
             }
         });
     }
