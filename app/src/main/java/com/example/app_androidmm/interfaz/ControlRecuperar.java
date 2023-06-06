@@ -41,8 +41,41 @@ public class ControlRecuperar extends AppCompatActivity {
         spPreguntas = findViewById(R.id.cbPreguntas);
 
         btnValidar.setOnClickListener(view -> {
-            if (!respuesta.getText().toString().isEmpty()) {
-                if (respuesta.getText().toString().equals(spPreguntas.getSelectedItem().toString())) {
+            String resp = respuesta.getText().toString();
+            String pregunta = spPreguntas.getSelectedItem().toString();
+            final boolean[] resultados = {false};
+            if (!resp.isEmpty()) {
+                new Thread(() -> {
+                    connectionManager.executeQuery("select * from usuario where pregunta like '" + pregunta + "' and respuesta like '" + resp + "'", new ConnectionManager.QueryCallback() {
+                        @Override
+                        public void onQueryCompleted(ResultSet resultSet, int rowsAffected) {
+                            try {
+                                while (resultSet.next()) {
+                                    user.setAlias(resultSet.getString("alias"));
+                                    user.setPass(resultSet.getString("contrasena"));
+                                    user.setPkUsuario(resultSet.getInt("pkusuario"));
+                                    user.setEmail(resultSet.getString("email"));
+                                    user.setNombre(resultSet.getString("nombre"));
+                                    user.setApellidos(resultSet.getString("apellidos"));
+                                    user.setFechaNacimiento(resultSet.getDate("fechanace"));
+                                    user.setVerificado(resultSet.getBoolean("verificado"));
+                                    user.setPregunta(resultSet.getString("pregunta"));
+                                    user.setRespuesta(resultSet.getString("respuesta"));
+                                    user.setAvatar((resultSet.getString("avatar")));
+                                    Log.d(TAG, user.toString());
+                                    resultados[0] = true;
+                                }
+                            } catch (SQLException e) {
+                                Log.e(TAG, "Error al procesar los resultados: " + e.getMessage());
+                            }
+                        }
+                        @Override
+                        public void onQueryFailed(String error) {
+                            Log.e(TAG, error);
+                        }
+                    });
+                }).start();
+                if (resultados[0] && pregunta.equals(user.getPregunta()) && resp.equalsIgnoreCase(user.getRespuesta())) {
                     newPass.setEnabled(true);
                     newPassRepit.setEnabled(true);
                     btnCambiarPass.setEnabled(true);
@@ -79,8 +112,10 @@ public class ControlRecuperar extends AppCompatActivity {
                                             Log.e(TAG, error);
                                         }
                                     });
-                        });
+                        }).start();
                     }
+                } else {
+                    Toast.makeText(this,"No existe usuario con esta pregunta y respuesta de recuperación", Toast.LENGTH_SHORT);
                 }
             } else {
                 Toast.makeText(this, "No se ha introducido respuesta", Toast.LENGTH_SHORT);

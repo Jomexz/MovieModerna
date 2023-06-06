@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                             user.setRespuesta(resultSet.getString("respuesta"));
                             user.setAvatar((resultSet.getString("avatar")));
                             Log.d(TAG, user.toString());
-                            // Verificar la contraseña y continuar la lógica aquí
+                            // Verificar la contraseña
                             if (pass.equals(passUser)) {
                                 System.out.println("Se ha iniciado sesión");
                                 Intent intent = new Intent(MainActivity.this, ControlBienvenido.class);
