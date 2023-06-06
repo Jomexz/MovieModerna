@@ -1,0 +1,106 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#9370DB"
+                android:padding="20dp">
+
+    <ImageView
+            android:id="@+id/imgAvatarC"
+            android:layout_width="168dp"
+            android:layout_height="145dp"
+            android:layout_centerHorizontal="true"
+            tools:srcCompat="@tools:sample/avatars[1]"/>
+
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/imgAvatarC"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/button_background"
+            android:text="Cambiar avatar"
+            android:textSize="12sp"
+            android:padding="10dp"
+            android:layout_marginTop="20dp"
+            android:id="@+id/changeAvatarButton" />
+
+    <EditText
+            android:layout_width="231dp"
+            android:layout_height="30dp"
+            android:layout_below="@id/changeAvatarButton"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/textview_background"
+            android:hint="Alias"
+            android:textColorHint="@color/black"
+            android:textSize="12sp"
+            android:textColor="@color/black"
+            android:padding="5dp"
+            android:layout_marginTop="20dp"
+            android:id="@+id/aliasEditText" />
+
+    <EditText
+            android:layout_width="231dp"
+            android:layout_height="30dp"
+            android:layout_below="@id/aliasEditText"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/textview_background"
+            android:hint="Nombre"
+            android:textColorHint="@color/black"
+            android:textSize="12sp"
+            android:padding="5dp"
+            android:layout_marginTop="10dp"
+            android:id="@+id/nombreEditText" />
+
+    <EditText
+            android:layout_width="231dp"
+            android:layout_height="30dp"
+            android:layout_below="@id/nombreEditText"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/textview_background"
+            android:hint="Apellidos"
+            android:textColorHint="@color/black"
+            android:textSize="12sp"
+            android:padding="5dp"
+            android:layout_marginTop="10dp"
+            android:id="@+id/apellidosEditText" />
+
+    <EditText
+            android:layout_width="230dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/apellidosEditText"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/textview_background"
+            android:hint="Contraseña nueva"
+            android:textColorHint="@color/black"
+            android:textSize="12sp"
+            android:padding="5dp"
+            android:layout_marginTop="10dp"
+            android:id="@+id/contrasenaNuevaEditText"
+            android:inputType="textPassword"/>
+
+    <EditText
+            android:layout_width="230dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/contrasenaNuevaEditText"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/textview_background"
+            android:hint="Confirmar contraseña"
+            android:textColorHint="@color/black"
+            android:textSize="12sp"
+            android:padding="5dp"
+            android:layout_marginTop="10dp"
+            android:id="@+id/confirmarContrasenaEditText"
+            android:inputType="textPassword"/>
+
+    <Button
+            android:layout_width="168dp"
+            android:layout_height="44dp"
+            android:layout_below="@id/confirmarContrasenaEditText"
+            android:layout_centerHorizontal="true"
+            android:text="Guardar cambios"
+            android:textSize="12sp"
+            android:padding="10dp"
+            android:layout_marginTop="20dp"
+            android:id="@+id/guardarCambiosButton"
+            android:background="@drawable/button_background"/>
+
+</RelativeLayout>

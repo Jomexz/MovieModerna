@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#9370DB">
+    <RelativeLayout
+            android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#9370DB">
+
+        <ImageView
+                android:id="@+id/imgAppIcon"
+                android:layout_width="130dp"
+                android:layout_height="99dp"
+                android:layout_marginTop="17dp"
+        />
+
+        <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/imgAppIcon"
+                android:layout_marginTop="20dp"
+                android:text="RECUPERAR CONTRASEÑA"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"/>
+
+        <Spinner
+                android:id="@+id/cbPreguntas"
+                android:entries="@array/preguntas"
+                android:layout_width="match_parent"
+                android:layout_height="29dp"
+                android:layout_below="@id/tvTitle"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/spinner_background"
+                android:spinnerMode="dropdown"/>
+
+        <EditText
+                android:id="@+id/txtRespuesta"
+                android:layout_width="match_parent"
+                android:layout_height="29dp"
+                android:layout_below="@id/cbPreguntas"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/textview_background"
+                android:hint="Respuesta"
+                android:textColor="#000000"/>
+        <Button
+                android:id="@+id/btnValidar"
+                android:layout_width="140dp"
+                android:layout_height="35dp"
+                android:layout_below="@id/txtRespuesta"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="50dp"
+                android:background="@drawable/button_background"
+                android:text="VALIDAR RESPUESTA"
+                android:textColor="#FFFFFF"/>
+
+        <EditText
+                android:id="@+id/txtNewPass"
+                android:layout_width="151dp"
+                android:layout_height="29dp"
+                android:layout_below="@id/btnValidar"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/textview_background"
+                android:hint="Nueva contraseña"
+                android:inputType="textPassword"
+                android:textColor="#000000"/>
+
+        <EditText
+                android:id="@+id/txtNewPassRepit"
+                android:layout_width="151dp"
+                android:layout_height="29dp"
+                android:layout_below="@id/txtNewPass"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="-32dp"
+                android:layout_marginRight="42dp"
+                android:background="@drawable/textview_background"
+                android:hint="Repita nueva contraseña"
+                android:inputType="textPassword"
+                android:textColor="#000000"/>
+        <Button
+                android:id="@+id/btnCambiar"
+                android:layout_width="163dp"
+                android:layout_height="35dp"
+                android:layout_below="@id/txtNewPassRepit"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/button_background"
+                android:text="CAMBIAR CONTRASEÑA"
+                android:textColor="#FFFFFF"
+                android:enabled="false"/>
+    </RelativeLayout>
+</ScrollView>

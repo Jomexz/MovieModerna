@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#9370DB">
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+        <TextView
+                android:id="@+id/lblCrearCuenta"
+                android:layout_width="210dp"
+                android:layout_height="35dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:text="CREAR CUENTA"
+                android:textColor="#FFFFFF"
+                android:textSize="28sp" />
+
+        <ImageView
+                android:id="@+id/imgAvatarC"
+                android:layout_width="142dp"
+                android:layout_height="125dp"
+                android:layout_below="@+id/lblCrearCuenta"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="32dp"
+        />
+
+        <Button
+                android:id="@+id/btnCambiarAvatar"
+                android:layout_width="120dp"
+                android:layout_height="37dp"
+                android:layout_below="@id/imgAvatarC"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/button_background"
+                android:text="Cambiar avatar"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"/>
+
+        <EditText
+                android:id="@+id/txtAlias"
+                android:layout_width="230dp"
+                android:layout_height="35dp"
+                android:layout_below="@+id/btnCambiarAvatar"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/textview_background"
+                android:hint="Nombre de usuario"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+
+        <EditText
+                android:id="@+id/txtCorreo"
+                android:layout_width="230dp"
+                android:layout_height="35dp"
+                android:layout_below="@id/txtAlias"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/textview_background"
+                android:hint="Correo electrónico"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+
+        <EditText
+                android:id="@+id/txtPass"
+                android:layout_width="230dp"
+                android:layout_height="35dp"
+                android:layout_below="@id/txtCorreo"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/textview_background"
+                android:hint="Contraseña"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+
+        <EditText
+                android:id="@+id/txtPassConfirm"
+                android:layout_width="230dp"
+                android:layout_height="35dp"
+                android:layout_below="@id/txtPass"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/textview_background"
+                android:hint="Repite contraseña"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+
+        <EditText
+                android:id="@+id/txtNombre"
+                android:layout_width="230dp"
+                android:layout_height="35dp"
+                android:layout_below="@id/txtPassConfirm"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/textview_background"
+                android:hint="Nombre"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+
+        <EditText
+                android:id="@+id/txtApellidos"
+                android:layout_width="230dp"
+                android:layout_height="35dp"
+                android:layout_below="@id/txtNombre"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/textview_background"
+                android:hint="Apellidos"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+
+        <DatePicker
+                android:id="@+id/dtNac"
+                android:layout_width="230dp"
+                android:layout_height="35dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/textview_background"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:headerBackground="@drawable/textview_background"
+                android:visibility="gone"/>
+
+        <TextView
+                android:layout_width="230dp"
+                  android:layout_height="35dp"
+                  android:id="@+id/viewFecha"
+                  android:layout_centerHorizontal="true"
+                  android:layout_marginTop="16dp"
+                  android:background="@drawable/textview_background"
+                  android:layout_below="@id/txtApellidos"
+                android:hint="Fecha de nacimiento: "
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+        <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@android:drawable/ic_menu_month"
+                android:id="@+id/imageButton"
+        />
+        <Spinner
+                android:id="@+id/cbPreguntas"
+                android:layout_width="230dp"
+                android:layout_height="35dp"
+                android:layout_below="@id/viewFecha"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:entries="@array/preguntas"
+                android:background="@drawable/spinner_background"
+                android:popupBackground="@drawable/spinner_popup_background" />
+
+
+        <EditText
+                android:id="@+id/txtRespuesta"
+                android:layout_width="230dp"
+                android:layout_height="35dp"
+                android:layout_below="@id/cbPreguntas"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/textview_background"
+                android:hint="Respuesta de seguridad"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+
+        <Button
+                android:id="@+id/btnRegistrarse"
+                android:layout_width="232dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtRespuesta"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/button_background"
+                android:text="REGISTRARSE"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"/>
+
+
+    </RelativeLayout>
+</ScrollView>

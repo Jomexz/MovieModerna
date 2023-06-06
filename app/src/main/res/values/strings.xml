@@ -1,0 +1,10 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" translatable="false">App_AndroidMM</string>
+    <string name="description_text" tools:ignore="MissingTranslation"><![CDATA[<b>Descripción</b>: ]]></string>
+    <string name="actor_text" tools:ignore="MissingTranslation"><![CDATA[<b>Actor principal</b>: ]]></string>
+    <string name="fecha_text" tools:ignore="MissingTranslation"><![CDATA[<b>Fecha de estreno</b>: ]]></string>
+    <string name="plataforma_text" tools:ignore="MissingTranslation"><![CDATA[<b>Plataforma de Streaming</b>: ]]></string>
+    <string name="calificacion_text" tools:ignore="MissingTranslation"><![CDATA[<b>Calificación de edad</b>: ]]></string>
+    <string name="genero_text" tools:ignore="MissingTranslation"><![CDATA[<b>Géneros</b>: ]]></string>
+    <string name="director_text" tools:ignore="MissingTranslation"><![CDATA[<b>Director</b>: ]]></string>
+</resources>

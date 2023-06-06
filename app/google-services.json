@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "15534123097",
+    "firebase_url": "https://moviemoderna-default-rtdb.firebaseio.com",
+    "project_id": "moviemoderna",
+    "storage_bucket": "moviemoderna.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:15534123097:android:3e7aa7981b36d8ab26e948",
+        "android_client_info": {
+          "package_name": "com.example.app_androidmm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoz1xuJ1i8iCIZFQWB6P4OXSxRBDH291E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:15534123097:android:7eb0b9bd650b3c1426e948",
+        "android_client_info": {
+          "package_name": "com.example.test"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoz1xuJ1i8iCIZFQWB6P4OXSxRBDH291E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

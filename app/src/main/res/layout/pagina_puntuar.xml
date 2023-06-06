@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:background="#9370DB">
+    <LinearLayout
+            android:id="@+id/parentLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="HORA DE PUNTUAR"
+                android:textColor="#FFFFFF"
+                android:textSize="36sp" />
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+            <EditText
+                    android:id="@+id/txtSearchP"
+                    android:layout_width="310dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Escribe lo que quieres buscar..."
+                    android:textSize="14sp"/>
+
+            <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    app:srcCompat="?android:attr/actionModeWebSearchDrawable"
+                    android:id="@+id/btnBuscarP"
+                    android:layout_marginTop="0dp"/>
+
+        </LinearLayout>
+
+        <Spinner
+                android:id="@+id/spinnerSearchByP"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:entries="@array/search_options"
+                android:textSize="14sp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp" />
+
+    </LinearLayout>
+</ScrollView>

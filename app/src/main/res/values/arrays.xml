@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="search_options">
+        <item>POR TÍTULO</item>
+        <item>POR DIRECTOR</item>
+        <item>POR PROTAGONISTA</item>
+        <item>POR AÑO DE ESTRENO</item>
+    </string-array>
+
+    <string-array name="preguntas">
+        <item>¿En qué país naciste?</item>
+        <item>¿Cómo se llamaba tu mascota de pequeño?</item>
+        <item>¿Cuántos hermanos tienes?</item>
+        <item>¿Cómo se llama tu madre?</item>
+        <item>¿De qué color son tus ojos?</item>
+    </string-array>
+</resources>

@@ -1,0 +1,219 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#9370DB">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_vertical"
+            android:layout_gravity="center_horizontal"
+            android:padding="16dp">
+
+        <TextView
+                android:id="@+id/lblCrearCuenta"
+                android:layout_width="210dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:text="CREAR CUENTA"
+                android:textColor="#FFFFFF"
+                android:textSize="28sp" />
+
+        <ImageView
+                android:id="@+id/imgAvatarC"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_marginTop="32dp"
+                android:layout_gravity="center_horizontal" tools:srcCompat="@tools:sample/avatars[10]"/>
+
+        <Button
+                android:id="@+id/btnCambiarAvatar"
+                android:layout_width="120dp"
+                android:layout_height="37dp"
+                android:background="@drawable/button_background"
+                android:text="Cambiar avatar"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp" />
+
+        <EditText
+                android:id="@+id/txtAlias"
+                android:layout_width="230dp"
+                android:layout_height="35dp"
+                android:layout_below="@+id/btnCambiarAvatar"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/textview_background"
+                android:hint="Nombre de usuario"
+                android:textColorHint="@color/black"
+                android:textColor="@color/black"
+                android:gravity="center_vertical"
+                android:layout_gravity="center_horizontal"
+                android:textSize="14sp" />
+
+        <EditText
+                android:id="@+id/txtCorreo"
+                android:layout_width="230dp"
+                android:layout_height="35dp"
+                android:layout_below="@id/txtAlias"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/textview_background"
+                android:hint="Correo electrónico"
+                android:textColorHint="@color/black"
+                android:textColor="@color/black"
+                android:layout_gravity="center_horizontal"
+                android:textSize="14sp" />
+
+        <EditText
+                android:id="@+id/txtPass"
+                android:layout_width="230dp"
+                android:layout_height="35dp"
+                android:layout_below="@id/txtCorreo"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/textview_background"
+                android:hint="Contraseña"
+                android:textColorHint="@color/black"
+                android:textColor="@color/black"
+                android:layout_gravity="center_horizontal"
+                android:textSize="14sp" />
+
+        <EditText
+                android:id="@+id/txtPassConfirm"
+                android:layout_width="230dp"
+                android:layout_height="35dp"
+                android:layout_below="@id/txtPass"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/textview_background"
+                android:hint="Repite contraseña"
+                android:textColorHint="@color/black"
+                android:textColor="@color/black"
+                android:layout_gravity="center_horizontal"
+                android:textSize="14sp" />
+
+        <EditText
+                android:id="@+id/txtNombre"
+                android:layout_width="230dp"
+                android:layout_height="35dp"
+                android:layout_below="@id/txtPassConfirm"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/textview_background"
+                android:hint="Nombre"
+                android:textColorHint="@color/black"
+                android:textColor="@color/black"
+                android:layout_gravity="center_horizontal"
+                android:textSize="14sp" />
+
+        <EditText
+                android:id="@+id/txtApellidos"
+                android:layout_width="230dp"
+                android:layout_height="35dp"
+                android:layout_below="@id/txtNombre"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/textview_background"
+                android:hint="Apellidos"
+                android:textColorHint="@color/black"
+                android:textColor="@color/black"
+                android:layout_gravity="center_horizontal"
+                android:textSize="14sp" />
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center">
+
+            <RelativeLayout
+                    android:layout_width="230dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/textview_background">
+
+                <TextView
+                        android:id="@+id/viewFecha"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:text="Fecha de nacimiento:"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginTop="15dp"/>
+
+                <ImageButton
+                        android:id="@+id/imageButton"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:src="@android:drawable/ic_menu_month"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginEnd="0dp" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+
+
+        <Spinner
+                android:id="@+id/cbPreguntas"
+                android:layout_width="230dp"
+                android:layout_height="35dp"
+                android:layout_below="@id/viewFecha"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:entries="@array/preguntas"
+                android:background="@drawable/spinner_background"
+                android:layout_gravity="center_horizontal"
+                android:popupBackground="@drawable/spinner_popup_background" />
+
+
+        <EditText
+                android:id="@+id/txtRespuesta"
+                android:layout_width="230dp"
+                android:layout_height="35dp"
+                android:layout_below="@id/cbPreguntas"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/textview_background"
+                android:hint="Respuesta de seguridad"
+                android:textColorHint="@color/black"
+                android:textColor="@color/black"
+                android:layout_gravity="center_horizontal"
+                android:textSize="14sp" />
+
+        <Button
+                android:id="@+id/btnRegistrarse"
+                android:layout_width="232dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtRespuesta"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/button_background"
+                android:text="REGISTRARSE"
+                android:textColor="#FFFFFF"
+                android:layout_gravity="center_horizontal"
+                android:textSize="24sp"/>
+        <DatePicker
+                android:id="@+id/dtNac"
+                android:layout_width="230dp"
+                android:layout_height="35dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/textview_background"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:headerBackground="@drawable/textview_background"
+                android:visibility="gone" />
+
+    </LinearLayout>
+</ScrollView>
