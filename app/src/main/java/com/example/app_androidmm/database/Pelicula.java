@@ -171,8 +171,8 @@ public class Pelicula {
     // Calcula la similitud entre dos películas utilizando técnicas avanzadas de procesamiento de texto
     public double calcularSimilitud(Pelicula otraPelicula) {
         // Preprocesamiento de texto
-        String[] genero1 = genero.toLowerCase().split(" ");
-        String[] genero2 = otraPelicula.getGenero().toLowerCase().split(" ");
+        String[] genero1 = genero.toLowerCase().split(", ");
+        String[] genero2 = otraPelicula.getGenero().toLowerCase().split(", ");
 
         // Vectorización de texto
         double[] vector1 = vectorizarTexto(genero1);
