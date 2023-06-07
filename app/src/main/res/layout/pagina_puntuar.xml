@@ -11,10 +11,16 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+        <ImageView
+                android:layout_width="130dp"
+                android:layout_height="99dp"
+                android:layout_marginTop="17dp"
+                app:srcCompat="@drawable/gato"/>
+
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="20dp"
                 android:text="HORA DE PUNTUAR"
                 android:textColor="#FFFFFF"
                 android:textSize="36sp" />

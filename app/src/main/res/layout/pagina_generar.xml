@@ -1,45 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
             android:background="#9370DB">
 
     <LinearLayout
+            android:id="@+id/parentLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+        <ImageView
+                android:layout_width="130dp"
+                android:layout_height="99dp"
+                android:layout_marginTop="17dp"
+                app:srcCompat="@drawable/gato"/>
 
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="RECOMENDADOR"
-                android:textColor="@android:color/white"
-                android:textSize="36sp"
-                android:textStyle="bold"
-                android:layout_gravity="center_horizontal" />
+                android:layout_marginTop="20dp"
+                android:text="HORA DE RECOMENDAR"
+                android:textColor="#FFFFFF"
+                android:textSize="36sp" />
 
         <ImageView
-                android:id="@+id/imgAppIcon"
+                android:id="@+id/ojo"
                 android:layout_width="133dp"
                 android:layout_height="110dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center_horizontal" />
 
         <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/movieRecyclerView"
+                android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-        <Button
-                android:id="@+id/shareButton"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="COMPARTIR"
-                android:textColor="#FFFFFF"
-                android:background="@drawable/button_background"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="15dp"/>
+                android:layout_marginTop="20dp"
+                android:background="#9370DB"/>
+
+
 
     </LinearLayout>
 </ScrollView>

@@ -30,7 +30,7 @@
                 android:id="@+id/cbPreguntas"
                 android:entries="@array/preguntas"
                 android:layout_width="match_parent"
-                android:layout_height="29dp"
+                android:layout_height="36dp"
                 android:layout_below="@id/tvTitle"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/spinner_background"
@@ -39,7 +39,7 @@
         <EditText
                 android:id="@+id/txtRespuesta"
                 android:layout_width="match_parent"
-                android:layout_height="29dp"
+                android:layout_height="36dp"
                 android:layout_below="@id/cbPreguntas"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/textview_background"
@@ -58,10 +58,12 @@
 
         <EditText
                 android:id="@+id/txtNewPass"
-                android:layout_width="151dp"
-                android:layout_height="29dp"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
                 android:layout_below="@id/btnValidar"
                 android:layout_marginTop="20dp"
+                android:layout_marginLeft="42dp"
+                android:layout_marginRight="42dp"
                 android:background="@drawable/textview_background"
                 android:hint="Nueva contraseña"
                 android:inputType="textPassword"
@@ -69,11 +71,12 @@
 
         <EditText
                 android:id="@+id/txtNewPassRepit"
-                android:layout_width="151dp"
-                android:layout_height="29dp"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
                 android:layout_below="@id/txtNewPass"
                 android:layout_alignParentRight="true"
-                android:layout_marginTop="-32dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="42dp"
                 android:layout_marginRight="42dp"
                 android:background="@drawable/textview_background"
                 android:hint="Repita nueva contraseña"
