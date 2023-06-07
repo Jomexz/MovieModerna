@@ -134,11 +134,15 @@ public class ControlPuntuar extends AppCompatActivity {
                                             // Imprimir la calificación por pantalla para comprobar que se ha calificado correctamente
                                             System.out.println("Calificación desde el botón CALIFICAR: " + rating);
                                             float ratingEscalado = rating / (float) 5 * 10; // Valor a escalado a una puntuación sobre 10
-                                            // AQUI IRIA EL UPDATE DE LA TABLA VISUALIZACION, AÑADIENDO LA CALIFICACION DEL USUARIO EN DICHA PELICULA
+                                            // AQUI IRIA EL INSERT DE LA TABLA VISUALIZACION, AÑADIENDO LA CALIFICACION DEL USUARIO EN DICHA PELICULA
                                             System.out.println("Calificación escaladada: " + ratingEscalado);
+                                            String insert = "insert into visualizacion (akusuario, fecha, ratingvista, akpelicula) values (" + user.getPkUsuario() +
+                                                    ", CURRENT_DATE, " + ratingEscalado + ", " + pelicula.getPkPelicula() + ");" +
+                                                    "UPDATE usuario SET verificado = true WHERE pkusuario = " + user.getPkUsuario() + "AND (SELECT COUNT(*) FROM visualizacion " +
+                                                    "WHERE akusuario = " + user.getPkUsuario() +") > 20;";
+
                                             new Thread(() -> {
-                                                connectionManager.executeQuery("insert into visualizacion (akusuario, fecha, ratingvista, akpelicula) values (" + user.getPkUsuario() +
-                                                        ", CURRENT_DATE, " + ratingEscalado + ", " + pelicula.getPkPelicula() + ")", new ConnectionManager.QueryCallback() {
+                                                connectionManager.executeQuery(insert, new ConnectionManager.QueryCallback() {
                                                     @Override
                                                     public void onQueryCompleted(ResultSet resultSet, int rowsAffected) {
                                                         System.out.println("Antes de puntuar");

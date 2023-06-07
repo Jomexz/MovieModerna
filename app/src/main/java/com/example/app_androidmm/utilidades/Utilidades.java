@@ -37,6 +37,9 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -134,40 +137,18 @@ public class Utilidades {
                     Log.e(TAG, "Error al subir la imagen a Firebase: " + e.getMessage());
                 });
     }
-    public static List<Pelicula> buscarPeliculas(ConnectionManager connectionManager, String campo, String valor, String TAG) {
-        Pelicula pelicula = new Pelicula();
-        List<Pelicula> peliculas = new ArrayList<>();
-        // Llamar al método executeQuery desde aquí
-        connectionManager.executeQuery("SELECT * FROM pelicula where " + campo + " like '%" + valor + "%'", new ConnectionManager.QueryCallback() {
-            @Override
-            public void onQueryCompleted(ResultSet resultSet, int rowsAffected) {
-                try {
-                    // Procesar los resultados de la consulta
-                    while (resultSet.next()) {
-                        pelicula.setTitulo(resultSet.getString("titulo"));
-                        pelicula.setDescripcion(resultSet.getString("descripcion"));
-                        pelicula.setRating((float) resultSet.getDouble("rating"));
-                        pelicula.setImagen(resultSet.getString("imagen"));
-                        pelicula.setGenero(resultSet.getString("genero"));
-                        pelicula.setCalificacion(resultSet.getString("calificacion"));
-                        pelicula.setDirector(resultSet.getString("director"));
-                        pelicula.setFechaPublicacion(resultSet.getDate("fechapublicacion"));
-                        Log.d(TAG, pelicula.toString());
-                        System.out.println(pelicula.toString());
-                        peliculas.add(pelicula);
-                    }
-                } catch (SQLException e) {
-                    Log.e(TAG, "Error al procesar los resultados: " + e.getMessage());
-                }
-            }
+    // Metodo para pasar un date a local date
+    public static LocalDate dateToLocalDate (java.sql.Date fechaPublicacion) {
+        // Convierte la fecha de SQL a Instant
+        Instant instant = Instant.ofEpochMilli(fechaPublicacion.getTime());
 
-            @Override
-            public void onQueryFailed(String error) {
-                // Manejar el error de la consulta
-                Log.e(TAG, error);
-            }
-        });
-        return peliculas;
+        // Crea una zona horaria (puedes ajustarla según tus necesidades)
+        ZoneId zonaHoraria = ZoneId.systemDefault();
+
+        // Crea un objeto LocalDate a partir del Instant y la zona horaria
+        LocalDate fechaLocal = instant.atZone(zonaHoraria).toLocalDate();
+
+        return fechaLocal;
     }
 
     public static byte[] imageViewToBytes(ImageView imageView) {
