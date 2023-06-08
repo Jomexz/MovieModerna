@@ -136,10 +136,11 @@ public class ControlPuntuar extends AppCompatActivity {
                                             float ratingEscalado = rating / (float) 5 * 10; // Valor a escalado a una puntuación sobre 10
                                             // AQUI IRIA EL INSERT DE LA TABLA VISUALIZACION, AÑADIENDO LA CALIFICACION DEL USUARIO EN DICHA PELICULA
                                             System.out.println("Calificación escaladada: " + ratingEscalado);
-                                            String insert = "insert into visualizacion (akusuario, fecha, ratingvista, akpelicula) values (" + user.getPkUsuario() +
-                                                    ", CURRENT_DATE, " + ratingEscalado + ", " + pelicula.getPkPelicula() + ");" +
+                                            String insert = "INSERT INTO visualizacion (akusuario, fecha, ratingvista, akpelicula)\n" +
+                                                    "VALUES (" + user.getPkUsuario() + ", CURRENT_DATE, " + ratingEscalado + ", " + pelicula.getPkPelicula() + ") " +
+                                                    "ON CONFLICT (akusuario, akpelicula) DO UPDATE SET ratingvista = EXCLUDED.ratingvista, fecha = EXCLUDED.fecha;" +
                                                     "UPDATE usuario SET verificado = true WHERE pkusuario = " + user.getPkUsuario() + "AND (SELECT COUNT(*) FROM visualizacion " +
-                                                    "WHERE akusuario = " + user.getPkUsuario() +") > 20;";
+                                                    "WHERE akusuario = " + user.getPkUsuario() +") > 20 AND verificado = false;";
 
                                             new Thread(() -> {
                                                 connectionManager.executeQuery(insert, new ConnectionManager.QueryCallback() {

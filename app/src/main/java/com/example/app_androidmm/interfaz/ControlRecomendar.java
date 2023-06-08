@@ -2,6 +2,7 @@ package com.example.app_androidmm.interfaz;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -23,8 +24,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.app_androidmm.utilidades.Utilidades.compartirPelicula;
-import static com.example.app_androidmm.utilidades.Utilidades.validaAnio;
+import static com.example.app_androidmm.utilidades.Utilidades.*;
 
 public class ControlRecomendar extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_EXTERNAL_STORAGE = 1;
@@ -123,7 +123,10 @@ public class ControlRecomendar extends AppCompatActivity {
                                                         PERMISSION_REQUEST_EXTERNAL_STORAGE);
                                             } else {
                                                 // El permiso de almacenamiento ya está concedido, descargar y compartir la imagen
-                                                descargarYCompartirImagen(imageUrl, title, description, actor, genero, director, plataforma);
+                                                runOnUiThread(() -> {
+                                                    descargarYCompartirImagen(TAG,ControlRecomendar.this, imageUrl, title, description, actor, genero, director, plataforma);
+
+                                                });
                                             }
                                         });
                                     } else {
@@ -134,7 +137,6 @@ public class ControlRecomendar extends AppCompatActivity {
                                 Log.e(TAG, "Error al procesar los resultados: " + e.getMessage());
                             }
                         }
-
                         @Override
                         public void onQueryFailed(String error) {
                             Log.e(TAG, error);
@@ -148,16 +150,7 @@ public class ControlRecomendar extends AppCompatActivity {
         });
     }
 
-    private void descargarYCompartirImagen(String imageUrl, String title, String description, String actor, String genero, String director, String plataforma) {
-        new Thread(() -> {
-            try {
-                Bitmap bitmap = Picasso.get().load(imageUrl).get();
-                runOnUiThread(() -> compartirPelicula(ControlRecomendar.this, bitmap, title, description, actor, genero, director, plataforma));
-            } catch (Exception e) {
-                Log.e(TAG, "Error al descargar la imagen: " + e.getMessage());
-            }
-        }).start();
-    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -175,7 +168,10 @@ public class ControlRecomendar extends AppCompatActivity {
                     String genero = pelicula.getGenero();
                     String director = pelicula.getDirector();
                     String plataforma = pelicula.getPlataforma();
-                    descargarYCompartirImagen(imageUrl, title, description, actor, genero, director, plataforma);
+                    runOnUiThread(() -> {
+                        descargarYCompartirImagen(TAG,this, imageUrl, title, description, actor, genero, director, plataforma);
+
+                    });
                 }
             } else {
                 // Permiso de almacenamiento externo denegado, muestra un mensaje al usuario

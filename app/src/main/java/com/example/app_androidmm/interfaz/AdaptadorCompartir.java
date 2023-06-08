@@ -28,7 +28,7 @@ import java.util.List;
 import static com.example.app_androidmm.utilidades.Utilidades.loadImageFromUrl;
 
 public class AdaptadorCompartir extends RecyclerView.Adapter<AdaptadorCompartir.ViewHolder> {
-    private static final int PERMISSION_REQUEST_EXTERNAL_STORAGE = 1;
+    public static final int PERMISSION_REQUEST_EXTERNAL_STORAGE = 1;
     private List<Pelicula> pData;
     private LayoutInflater pInflater;
     private Context context;

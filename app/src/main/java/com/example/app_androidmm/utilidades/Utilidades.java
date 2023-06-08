@@ -137,6 +137,18 @@ public class Utilidades {
                     Log.e(TAG, "Error al subir la imagen a Firebase: " + e.getMessage());
                 });
     }
+
+    public static void descargarYCompartirImagen(String TAG, Context context, String imageUrl, String title, String description, String actor, String genero, String director, String plataforma) {
+        new Thread(() -> {
+            try {
+                Bitmap bitmap = Picasso.get().load(imageUrl).get();
+                compartirPelicula(context, bitmap, title, description, actor, genero, director, plataforma);
+            } catch (Exception e) {
+                Log.e(TAG, "Error al descargar la imagen: " + e.getMessage());
+            }
+        }).start();
+    }
+
     // Metodo para pasar un date a local date
     public static LocalDate dateToLocalDate (java.sql.Date fechaPublicacion) {
         // Convierte la fecha de SQL a Instant
