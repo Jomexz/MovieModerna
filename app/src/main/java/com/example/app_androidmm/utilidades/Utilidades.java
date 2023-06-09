@@ -22,6 +22,8 @@ import android.widget.*;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.app_androidmm.database.ConnectionManager;
 import com.example.app_androidmm.database.Pelicula;
 import com.example.app_androidmm.database.Usuario;
@@ -54,6 +56,22 @@ public class Utilidades {
     public static final int REQUEST_IMAGE_CAMERA = 2;
     public static final int REQUEST_IMAGE_FILES = 3;
     public static final int REQUEST_IMAGE_PICKER = 1;
+    public static void openDrawer(DrawerLayout drawerLayout) {
+        drawerLayout.openDrawer(GravityCompat.START);
+    }
+
+    public static void closeDrawer(DrawerLayout drawerLayout) {
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
+    }
+
+    public static void redirectActivity(Activity activity, Class secondActivity) {
+        Intent intent = new Intent(activity, secondActivity);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        activity.startActivity(intent);
+        activity.finish();
+    }
 
     public static void compartirPelicula(Context context, Bitmap bitmap, String title, String description, String actor, String genero, String director, String plataforma) {
         // Guardar el bitmap en el almacenamiento local

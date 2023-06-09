@@ -1,106 +1,141 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:theme="@style/Theme.App_AndroidMM"
+        android:background="@color/purple_200"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Contenido principal -->
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+        <!-- Incluir la barra de herramientas -->
+        <include layout="@layout/toolbar"/>
+
+        <ScrollView
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#9370DB"
-                android:padding="20dp">
+                android:layout_below="@id/toolbar"
+                tools:ignore="NotSibling">
 
-    <ImageView
-            android:id="@+id/imgAvatarC"
-            android:layout_width="168dp"
-            android:layout_height="145dp"
-            android:layout_centerHorizontal="true"
-            tools:srcCompat="@tools:sample/avatars[1]"/>
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-    <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/imgAvatarC"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/button_background"
-            android:text="Cambiar avatar"
-            android:textSize="12sp"
-            android:padding="10dp"
-            android:layout_marginTop="20dp"
-            android:id="@+id/changeAvatarButton" />
+                <!-- Contenido del perfil -->
+                <ImageView
+                        android:id="@+id/imgAvatarC"
+                        android:layout_width="168dp"
+                        android:layout_height="145dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="30dp"
+                        tools:srcCompat="@tools:sample/avatars[1]"/>
 
-    <EditText
-            android:layout_width="231dp"
-            android:layout_height="30dp"
-            android:layout_below="@id/changeAvatarButton"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/textview_background"
-            android:hint="Alias"
-            android:textColorHint="@color/black"
-            android:textSize="12sp"
-            android:textColor="@color/black"
-            android:padding="5dp"
-            android:layout_marginTop="20dp"
-            android:id="@+id/aliasEditText" />
+                <Button
+                        android:id="@+id/changeAvatarButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="20dp"
+                        android:background="@drawable/button_background"
+                        android:text="Cambiar avatar"
+                        android:textSize="12sp"
+                        android:padding="10dp"/>
 
-    <EditText
-            android:layout_width="231dp"
-            android:layout_height="30dp"
-            android:layout_below="@id/aliasEditText"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/textview_background"
-            android:hint="Nombre"
-            android:textColorHint="@color/black"
-            android:textSize="12sp"
-            android:padding="5dp"
-            android:layout_marginTop="10dp"
-            android:id="@+id/nombreEditText" />
+                <EditText
+                        android:id="@+id/aliasEditText"
+                        android:layout_width="231dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="20dp"
+                        android:background="@drawable/textview_background"
+                        android:hint="Alias"
+                        android:textColorHint="@color/black"
+                        android:textSize="12sp"
+                        android:textColor="@color/black"
+                        android:padding="5dp"/>
 
-    <EditText
-            android:layout_width="231dp"
-            android:layout_height="30dp"
-            android:layout_below="@id/nombreEditText"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/textview_background"
-            android:hint="Apellidos"
-            android:textColorHint="@color/black"
-            android:textSize="12sp"
-            android:padding="5dp"
-            android:layout_marginTop="10dp"
-            android:id="@+id/apellidosEditText" />
+                <EditText
+                        android:id="@+id/nombreEditText"
+                        android:layout_width="231dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/textview_background"
+                        android:hint="Nombre"
+                        android:textColorHint="@color/black"
+                        android:textSize="12sp"
+                        android:padding="5dp"/>
 
-    <EditText
-            android:layout_width="230dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/apellidosEditText"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/textview_background"
-            android:hint="Contraseña nueva"
-            android:textColorHint="@color/black"
-            android:textSize="12sp"
-            android:padding="5dp"
-            android:layout_marginTop="10dp"
-            android:id="@+id/contrasenaNuevaEditText"
-            android:inputType="textPassword"/>
+                <EditText
+                        android:id="@+id/apellidosEditText"
+                        android:layout_width="231dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/textview_background"
+                        android:hint="Apellidos"
+                        android:textColorHint="@color/black"
+                        android:textSize="12sp"
+                        android:padding="5dp"/>
 
-    <EditText
-            android:layout_width="230dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/contrasenaNuevaEditText"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/textview_background"
-            android:hint="Confirmar contraseña"
-            android:textColorHint="@color/black"
-            android:textSize="12sp"
-            android:padding="5dp"
-            android:layout_marginTop="10dp"
-            android:id="@+id/confirmarContrasenaEditText"
-            android:inputType="textPassword"/>
+                <EditText
+                        android:id="@+id/contrasenaNuevaEditText"
+                        android:layout_width="230dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/textview_background"
+                        android:hint="Contraseña nueva"
+                        android:textColorHint="@color/black"
+                        android:textSize="12sp"
+                        android:padding="5dp"
+                        android:inputType="textPassword"/>
 
-    <Button
-            android:layout_width="168dp"
-            android:layout_height="44dp"
-            android:layout_below="@id/confirmarContrasenaEditText"
-            android:layout_centerHorizontal="true"
-            android:text="Guardar cambios"
-            android:textSize="12sp"
-            android:padding="10dp"
-            android:layout_marginTop="20dp"
-            android:id="@+id/guardarCambiosButton"
-            android:background="@drawable/button_background"/>
+                <EditText
+                        android:id="@+id/confirmarContrasenaEditText"
+                        android:layout_width="230dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/textview_background"
+                        android:hint="Confirmar contraseña"
+                        android:textColorHint="@color/black"
+                        android:textSize="12sp"
+                        android:padding="5dp"
+                        android:inputType="textPassword"/>
 
-</RelativeLayout>
+                <Button
+                        android:id="@+id/guardarCambiosButton"
+                        android:layout_width="168dp"
+                        android:layout_height="44dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="20dp"
+                        android:text="Guardar cambios"
+                        android:textSize="12sp"
+                        android:padding="10dp"
+                        android:background="@drawable/button_background"/>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+    <!-- Menú lateral -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@color/white">
+
+        <!-- Contenido del menú lateral -->
+        <include layout="@layout/nav_drawer"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.drawerlayout.widget.DrawerLayout>

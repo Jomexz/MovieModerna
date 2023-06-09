@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:theme="@style/Theme.App_AndroidMM"
+        android:background="@color/purple_200"
+        android:id="@+id/drawer_layout"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Contenido principal -->
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+        <!-- Barra de herramientas -->
+        <include layout="@layout/toolbar"/>
+
+        <ScrollView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="15dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                          android:orientation="vertical">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                          android:text="SOBRE MI"
+                          android:textColor="@color/white"
+                          android:textSize="30dp"
+                />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                          android:text="Descripcion"
+                          android:textColor="@color/white"
+                          android:textSize="20dp"
+
+                />
+            </LinearLayout>
+
+
+        </ScrollView>
+    </LinearLayout>
+
+    <!-- Menú lateral -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@color/white">
+
+        <!-- Contenido del menú lateral -->
+        <include layout="@layout/nav_drawer"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.drawerlayout.widget.DrawerLayout>

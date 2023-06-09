@@ -4,20 +4,15 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.Toast;
+import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.app_androidmm.R;
 import com.example.app_androidmm.database.ConnectionManager;
 import com.example.app_androidmm.database.Usuario;
@@ -32,7 +27,9 @@ import java.util.*;
 import static com.example.app_androidmm.utilidades.Utilidades.*;
 
 public class ControlConfig extends AppCompatActivity {
-
+    private DrawerLayout drawerLayout;
+    private ImageView menu;
+    private LinearLayout home, settings, info, logout;
     private static final int REQUEST_CODE_SELECT_IMAGE = 1;
     private static final String TAG = "ControlConfig";
     Button btnAvatar, btnConfigurar;
@@ -47,6 +44,14 @@ public class ControlConfig extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pagina_config);
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+        menu = findViewById(R.id.navigation_menu);
+        home = findViewById(R.id.ly_home);
+        settings = findViewById(R.id.settings);
+        info = findViewById(R.id.info);
+        logout = findViewById(R.id.exit);
+
         imgAvatarConfig = findViewById(R.id.imgAvatarC);
         txtAliasConfig = findViewById(R.id.aliasEditText);
         txtNombreConfig = findViewById(R.id.nombreEditText);
@@ -135,6 +140,34 @@ public class ControlConfig extends AppCompatActivity {
             }).start();
 
         });
+        menu.setOnClickListener(view -> {
+            openDrawer(drawerLayout);
+        });
+
+        home.setOnClickListener(view -> {
+            redirectActivity(this,ControlBienvenido.class);
+        });
+
+        settings.setOnClickListener(view -> {
+            recreate();
+        });
+
+        info.setOnClickListener(view -> {
+            redirectActivity(this, ControlInfo.class);
+        });
+
+        logout.setOnClickListener(view -> {
+            Toast.makeText(this,"Has cerrado sesión correctamente", Toast.LENGTH_SHORT);
+            user = null; // Borramos los datos del usuario
+            redirectActivity(this, MainActivity.class);
+
+        });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        closeDrawer(drawerLayout);
     }
 
     @Override
