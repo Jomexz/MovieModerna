@@ -75,7 +75,7 @@ public class ControlRegistro extends AppCompatActivity{
         setContentView(R.layout.pagina_registro);
         // Definir atributos
         imgavatar = findViewById(R.id.imgAvatarC);
-
+        loadImageFromUrl("https://firebasestorage.googleapis.com/v0/b/moviemoderna.appspot.com/o/avatar%2Fuser.jpg?alt=media&token=8191eb8a-a28d-45b7-80b2-20a859d7dcc8",imgavatar);
         // Cambiar foto con formato correcto
         btnCambiarFoto = findViewById(R.id.btnCambiarAvatar);
         btnCambiarFoto.setOnClickListener(view -> {

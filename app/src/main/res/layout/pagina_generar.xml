@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:theme="@style/Theme.App_AndroidMM"
-        android:background="@color/purple_200"
+        android:background="@drawable/background_bkg"
         xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Contenido principal -->
@@ -19,8 +19,7 @@
         <include layout="@layout/toolbar"/>
         <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
-                    android:background="#9370DB">
+                    android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto">
 
             <LinearLayout
                     android:id="@+id/parentLayout"
@@ -29,21 +28,15 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                <ImageView
-                        android:layout_width="130dp"
-                        android:layout_height="99dp"
-                        android:layout_marginTop="17dp"
-                        app:srcCompat="@drawable/gato"/>
-
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginTop="10dp"
                         android:text="RECOMENDADOR"
                         android:textColor="#FFFFFF"
                         android:textSize="36sp"/>
 
-                <ImageView
+                <ViewAnimator
                         android:id="@+id/ojo"
                         android:layout_width="133dp"
                         android:layout_height="110dp"

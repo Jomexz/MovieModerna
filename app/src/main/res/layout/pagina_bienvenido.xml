@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:theme="@style/Theme.App_AndroidMM"
-        android:background="@color/purple_200"
+        android:background="@drawable/background_bkg"
         xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Contenido principal -->
@@ -82,7 +82,7 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="0dp"
                         android:text="Puntuar películas"
-                        android:backgroundTint="@color/white"
+                        android:background="@drawable/button_background"
                         android:textColor="@color/white"
                         android:textSize="14sp"
                         android:textStyle="normal"

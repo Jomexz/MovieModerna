@@ -3,7 +3,7 @@
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#9370DB">
+            android:background="@drawable/background_bkg">
 
     <LinearLayout
             android:layout_width="match_parent"
@@ -28,7 +28,7 @@
                 android:layout_width="200dp"
                 android:layout_height="200dp"
                 android:layout_marginTop="32dp"
-                android:layout_gravity="center_horizontal" tools:srcCompat="@tools:sample/avatars[10]"/>
+                android:layout_gravity="center_horizontal" tools:srcCompat="@tools:sample/avatars"/>
 
         <Button
                 android:id="@+id/btnCambiarAvatar"

@@ -3,11 +3,10 @@
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:background="#9370DB">
+            android:background="@drawable/background_bkg">
     <RelativeLayout
             android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#9370DB">
+                    android:layout_height="match_parent">
 
         <ImageView
                 android:id="@+id/imgAppIcon"
@@ -34,6 +33,7 @@
                 android:layout_below="@id/tvTitle"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/spinner_background"
+                android:popupBackground="@drawable/spinner_popup_background"
                 android:spinnerMode="dropdown"/>
 
         <EditText

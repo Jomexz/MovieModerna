@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:theme="@style/Theme.App_AndroidMM"
-        android:background="@color/purple_200"
+        android:background="@drawable/background_bkg"
         xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Contenido principal -->
@@ -89,8 +89,8 @@
 
                 <EditText
                         android:id="@+id/contrasenaNuevaEditText"
-                        android:layout_width="230dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="231dp"
+                        android:layout_height="30dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="10dp"
                         android:background="@drawable/textview_background"
@@ -102,8 +102,8 @@
 
                 <EditText
                         android:id="@+id/confirmarContrasenaEditText"
-                        android:layout_width="230dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="231dp"
+                        android:layout_height="30dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="10dp"
                         android:background="@drawable/textview_background"
