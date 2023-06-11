@@ -69,8 +69,8 @@ public class MainActivity extends AppCompatActivity {
                             // Verificar la contraseña
                             if (pass.equals(passUser)) {
                                 System.out.println("Se ha iniciado sesión");
-                                Intent intent = new Intent(MainActivity.this, ControlBienvenido.class);
-                                startActivity(intent);
+                                redirectActivity(MainActivity.this,ControlBienvenido.class);
+                                finish();
 //                                            runOnUiThread(new Runnable() {
 //                                                @Override
 //                                                public void run() {

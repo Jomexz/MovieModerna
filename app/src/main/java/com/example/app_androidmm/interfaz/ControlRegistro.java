@@ -64,8 +64,8 @@ public class ControlRegistro extends AppCompatActivity{
     private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
     private HashMap <String, String> datosUser = new HashMap<>();
     private ActivityResultLauncher<Intent> imagePickerLauncher;
-
-    Usuario user = Usuario.getInstance();
+    private String urlImagen = "https://firebasestorage.googleapis.com/v0/b/moviemoderna.appspot.com/o/avatar%2Fuser.jpg?alt=media&token=8191eb8a-a28d-45b7-80b2-20a859d7dcc8";
+    private Usuario user = Usuario.getInstance();
 
     private ConnectionManager connectionManager = new ConnectionManager();
     @SuppressLint("WrongThread")
@@ -75,7 +75,8 @@ public class ControlRegistro extends AppCompatActivity{
         setContentView(R.layout.pagina_registro);
         // Definir atributos
         imgavatar = findViewById(R.id.imgAvatarC);
-        loadImageFromUrl("https://firebasestorage.googleapis.com/v0/b/moviemoderna.appspot.com/o/avatar%2Fuser.jpg?alt=media&token=8191eb8a-a28d-45b7-80b2-20a859d7dcc8",imgavatar);
+        loadImageFromUrl(urlImagen,imgavatar);
+        user.setAvatar(urlImagen);
         // Cambiar foto con formato correcto
         btnCambiarFoto = findViewById(R.id.btnCambiarAvatar);
         btnCambiarFoto.setOnClickListener(view -> {

@@ -94,7 +94,7 @@ public class Utilidades {
             e.printStackTrace();
         }
 
-        return null;
+        return "No hay trailer de esta película";
     }
 
     public static void openDrawer(DrawerLayout drawerLayout) {
@@ -374,34 +374,31 @@ public class Utilidades {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Seleccionar imagen desde")
-                .setItems(options, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (which == 0) {
-                            if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_IMAGE_GALLERY);
-                            } else {
-                                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                                activity.startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
-                            }
-                        } else if (which == 1) {
+                .setItems(options, (dialog, which) -> {
+                    if (which == 0) {
+                        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_IMAGE_GALLERY);
+                        } else {
                             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                             activity.startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
-                        } else if (which == 2) {
-                            if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA}, REQUEST_IMAGE_CAMERA);
-                            } else {
-                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                activity.startActivityForResult(intent, REQUEST_IMAGE_CAMERA);
-                            }
-                        } else if (which == 3) {
-                            if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_IMAGE_FILES);
-                            } else {
-                                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                                intent.setType("image/*");
-                                activity.startActivityForResult(intent, REQUEST_IMAGE_FILES);
-                            }
+                        }
+                    } else if (which == 1) {
+                        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        activity.startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
+                    } else if (which == 2) {
+                        if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA}, REQUEST_IMAGE_CAMERA);
+                        } else {
+                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            activity.startActivityForResult(intent, REQUEST_IMAGE_CAMERA);
+                        }
+                    } else if (which == 3) {
+                        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_IMAGE_FILES);
+                        } else {
+                            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                            intent.setType("image/*");
+                            activity.startActivityForResult(intent, REQUEST_IMAGE_FILES);
                         }
                     }
                 })
