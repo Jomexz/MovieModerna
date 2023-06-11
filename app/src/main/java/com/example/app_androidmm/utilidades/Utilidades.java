@@ -70,7 +70,6 @@ public class Utilidades {
         Intent intent = new Intent(activity, secondActivity);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(intent);
-        activity.finish();
     }
 
     public static void compartirPelicula(Context context, Bitmap bitmap, String title, String description, String actor, String genero, String director, String plataforma) {

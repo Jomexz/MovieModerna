@@ -82,23 +82,19 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="0dp"
                         android:text="Puntuar películas"
-                        android:textColor="#FFFFFF"
-                        android:background="@drawable/button_background"
+                        android:backgroundTint="@color/white"
+                        android:textColor="@color/white"
                         android:textSize="14sp"
-                        android:textAllCaps="false"
                         android:textStyle="normal"
                         android:padding="8dp"
                         android:gravity="center"
                         android:layout_marginLeft="30dp"
                         android:layout_marginRight="30dp"
                         android:layout_marginBottom="10dp"
-                        android:backgroundTintMode="src_over"
-                        android:backgroundTint="@android:color/white"
                         android:elevation="2dp"
-                        android:stateListAnimator="@null"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:fontFamily="sans-serif"
+                        android:fontFamily="sans-serif-medium"
                         android:clickable="true"/>
+
 
                 <Button
                         android:id="@+id/btnRecomendar"
@@ -110,20 +106,14 @@
                         android:textColor="#FFFFFF"
                         android:background="@drawable/button_background"
                         android:textSize="24sp"
-                        android:textAllCaps="false"
                         android:textStyle="normal"
                         android:padding="8dp"
                         android:gravity="center"
                         android:layout_marginLeft="30dp"
                         android:layout_marginRight="30dp"
                         android:layout_marginBottom="10dp"
-                        android:backgroundTintMode="src_over"
-                        android:backgroundTint="@android:color/white"
                         android:elevation="2dp"
-                        android:stateListAnimator="@null"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:fontFamily="sans-serif"
-                        android:clickable="true"/>
+                        android:clickable="true" android:fontFamily="sans-serif-medium"/>
 
                 <Button
                         android:id="@+id/btnGenerarRecomendacion"
@@ -135,20 +125,13 @@
                         android:textColor="#FFFFFF"
                         android:background="@drawable/button_background"
                         android:textSize="24sp"
-                        android:textAllCaps="false"
-                        android:textStyle="normal"
                         android:padding="8dp"
                         android:gravity="center"
                         android:layout_marginLeft="30dp"
                         android:layout_marginRight="30dp"
                         android:layout_marginBottom="10dp"
-                        android:backgroundTintMode="src_over"
-                        android:backgroundTint="@android:color/white"
                         android:elevation="2dp"
-                        android:stateListAnimator="@null"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:fontFamily="sans-serif"
-                        android:clickable="true"/>
+                        android:clickable="true" android:fontFamily="sans-serif-medium"/>
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

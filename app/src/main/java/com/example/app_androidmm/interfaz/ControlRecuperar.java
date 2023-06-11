@@ -5,10 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.Toast;
+import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.app_androidmm.R;
 import com.example.app_androidmm.database.ConnectionManager;
@@ -18,8 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 
-import static com.example.app_androidmm.utilidades.Utilidades.mostrarErrorCampo;
-import static com.example.app_androidmm.utilidades.Utilidades.validarFormulario;
+import static com.example.app_androidmm.utilidades.Utilidades.*;
 
 public class ControlRecuperar extends AppCompatActivity {
     private static String TAG = "RecuperarControl";
@@ -27,7 +23,7 @@ public class ControlRecuperar extends AppCompatActivity {
     private EditText respuesta, newPass, newPassRepit;
     private Spinner spPreguntas;
     private ConnectionManager connectionManager = new ConnectionManager();
-    Usuario user = Usuario.getInstance();
+    private Usuario user = Usuario.getInstance();
 
     @SuppressLint("WrongThread")
     @Override
@@ -136,4 +132,5 @@ public class ControlRecuperar extends AppCompatActivity {
             }
         });
     }
+
 }

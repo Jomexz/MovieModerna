@@ -51,6 +51,9 @@
         <activity android:name=".interfaz.ControlRecomendar"
                   android:exported="true">
         </activity>
+        <activity android:name=".interfaz.ControlInfo"
+                  android:exported="true">
+        </activity>
     </application>
 
 </manifest>

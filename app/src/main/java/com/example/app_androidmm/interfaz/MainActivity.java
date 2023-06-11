@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
             pass = edpass.getText().toString();
 
             if (alias.isEmpty() || pass.isEmpty()) {
-                mostrarErrorCampo(MainActivity.this, "Algún campo vacío.", "Error en la introducción de datos");
+                mostrarErrorCampo(this, "Algún campo vacío.", "Error en la introducción de datos");
                 return;
             }
             Usuario user = Usuario.getInstance();
@@ -110,14 +110,12 @@ public class MainActivity extends AppCompatActivity {
 
         btnRegistro = findViewById(R.id.registerButton);
         btnRegistro.setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity.this, ControlRegistro.class);
-            startActivity(intent);
+            redirectActivity(this, ControlRegistro.class);
         });
 
         btnRecuperar = findViewById(R.id.forgotPasswordButton);
         btnRecuperar.setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity.this, ControlRecuperar.class);
-            startActivity(intent);
+            redirectActivity(this, ControlRecuperar.class);
         });
     }
 

@@ -16,12 +16,11 @@ import static com.example.app_androidmm.utilidades.Utilidades.*;
 
 public class ControlBienvenido extends AppCompatActivity {
     private DrawerLayout drawerLayout;
-    private ImageView menu, imgPerfil;
+    private ImageView menu, imgPerfil, navAvatar;
     private LinearLayout home, settings, info, logout;
-    Button btnPuntuar, btnRecomendar, btnGenerar;
-    ImageButton btnPerfil;
-    TextView textViewUser, txtVerificado;
-    Usuario user = Usuario.getInstance();
+    private Button btnPuntuar, btnRecomendar, btnGenerar;
+    private TextView textViewUser, txtVerificado, navUser, navNombre;
+    private Usuario user = Usuario.getInstance();
     @SuppressLint("WrongThread")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +33,12 @@ public class ControlBienvenido extends AppCompatActivity {
         settings = findViewById(R.id.settings);
         info = findViewById(R.id.info);
         logout = findViewById(R.id.exit);
-
+        navAvatar = findViewById(R.id.nav_avatar);
+        navUser = findViewById(R.id.nav_user);
+        navNombre = findViewById(R.id.nav_nameuser);
+        loadImageFromUrl(user.getAvatar(),navAvatar);
+        navUser.setText(user.getAlias());
+        navNombre.setText(user.getNombre() + " " + user.getApellidos());
 
         textViewUser = findViewById(R.id.lblUser);
         txtVerificado = findViewById(R.id.lblVerificado);
@@ -59,40 +63,37 @@ public class ControlBienvenido extends AppCompatActivity {
         });
 
         settings.setOnClickListener(view -> {
-            redirectActivity(ControlBienvenido.this, ControlConfig.class);
+            redirectActivity(this, ControlConfig.class);
         });
 
         info.setOnClickListener(view -> {
-            redirectActivity(ControlBienvenido.this, ControlInfo.class);
+            redirectActivity(this, ControlInfo.class);
         });
 
         logout.setOnClickListener(view -> {
             Toast.makeText(this,"Has cerrado sesión correctamente", Toast.LENGTH_SHORT);
             user = null; // Borramos los datos del usuario
-            redirectActivity(ControlBienvenido.this, MainActivity.class);
+            redirectActivity(this, MainActivity.class);
 
         });
 
         btnPuntuar = findViewById(R.id.btnPuntuar);
         btnPuntuar.setOnClickListener(view -> {
-            Intent intent = new Intent(ControlBienvenido.this, ControlPuntuar.class);
-            startActivity(intent);
+            redirectActivity(this, ControlPuntuar.class);
         });
 
         btnRecomendar = findViewById(R.id.btnRecomendar);
         btnRecomendar.setOnClickListener(view -> {
-            Intent intent = new Intent(ControlBienvenido.this, ControlRecomendar.class);
-            startActivity(intent);
+            redirectActivity(this, ControlRecomendar.class);
         });
 
         btnGenerar = findViewById(R.id.btnGenerarRecomendacion);
         btnGenerar.setOnClickListener(view -> {
             if(user.isVerificado()) {
-                Intent intent = new Intent(ControlBienvenido.this, ControlGenerar.class);
-                startActivity(intent);
+                redirectActivity(this, ControlGenerar.class);
             } else {
                 System.out.println("No es verificado");
-                Toast.makeText(ControlBienvenido.this,"El usuario debe estar verificado. Número de películas valoradas mínimo: 20.", Toast.LENGTH_LONG);
+                Toast.makeText(this,"El usuario debe estar verificado. Número de películas valoradas mínimo: 20.", Toast.LENGTH_LONG);
             }
         });
     }

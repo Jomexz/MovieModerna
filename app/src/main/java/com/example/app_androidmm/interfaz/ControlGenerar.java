@@ -5,12 +5,12 @@ import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
-import android.widget.Toast;
+import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.app_androidmm.R;
@@ -24,10 +24,15 @@ import java.sql.SQLOutput;
 import java.util.*;
 
 import static com.example.app_androidmm.interfaz.AdaptadorCompartir.PERMISSION_REQUEST_EXTERNAL_STORAGE;
-import static com.example.app_androidmm.utilidades.Utilidades.descargarYCompartirImagen;
+import static com.example.app_androidmm.utilidades.Utilidades.*;
+import static com.example.app_androidmm.utilidades.Utilidades.redirectActivity;
 
 public class ControlGenerar extends AppCompatActivity {
     private final String TAG = "GenerarControl";
+    private DrawerLayout drawerLayout;
+    private ImageView menu, navAvatar;
+    private LinearLayout home, settings, info, logout;
+    private TextView navUser, navNombre;
     private ConnectionManager connectionManager = new ConnectionManager();
     private AdaptadorCompartir adaptadorCompartir;
     private Usuario user = Usuario.getInstance();
@@ -37,12 +42,48 @@ public class ControlGenerar extends AppCompatActivity {
     private Pelicula pelicula1 = new Pelicula();
     private List<Pelicula> peliculasUsuario = new ArrayList<>();
     private int position;
-    @SuppressLint("WrongThread")
+    @SuppressLint({"WrongThread", "MissingInflatedId"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pagina_generar);
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+        menu = findViewById(R.id.navigation_menu);
+        home = findViewById(R.id.ly_home);
+        settings = findViewById(R.id.settings);
+        info = findViewById(R.id.info);
+        logout = findViewById(R.id.exit);
+        navAvatar = findViewById(R.id.nav_avatar);
+        navUser = findViewById(R.id.nav_user);
+        navNombre = findViewById(R.id.nav_nameuser);
+        loadImageFromUrl(user.getAvatar(),navAvatar);
+        navUser.setText(user.getAlias());
+        navNombre.setText(user.getNombre() + " " + user.getApellidos());
+
+        menu.setOnClickListener(view -> {
+            openDrawer(drawerLayout);
+        });
+
+        home.setOnClickListener(view -> {
+            redirectActivity(this,ControlBienvenido.class);
+        });
+
+        settings.setOnClickListener(view -> {
+            redirectActivity(this, ControlConfig.class);
+        });
+
+        info.setOnClickListener(view -> {
+            redirectActivity(this, ControlInfo.class);
+        });
+
+        logout.setOnClickListener(view -> {
+            Toast.makeText(this,"Has cerrado sesión correctamente", Toast.LENGTH_SHORT);
+            user = null; // Borramos los datos del usuario
+            redirectActivity(this, MainActivity.class);
+
+        });
 
         recyclerView = findViewById(R.id.recyclerView);
 
@@ -200,5 +241,11 @@ public class ControlGenerar extends AppCompatActivity {
                 Toast.makeText(ControlGenerar.this, "Permiso de almacenamiento denegado", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        closeDrawer(drawerLayout);
     }
 }

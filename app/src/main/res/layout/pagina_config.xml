@@ -115,8 +115,8 @@
 
                 <Button
                         android:id="@+id/guardarCambiosButton"
-                        android:layout_width="168dp"
-                        android:layout_height="44dp"
+                        android:layout_width="169dp"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="20dp"
                         android:text="Guardar cambios"

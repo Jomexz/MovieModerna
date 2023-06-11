@@ -28,16 +28,17 @@ import static com.example.app_androidmm.utilidades.Utilidades.*;
 
 public class ControlConfig extends AppCompatActivity {
     private DrawerLayout drawerLayout;
-    private ImageView menu;
+    private ImageView menu, navAvatar;
+    private TextView navUser, navNombre;
     private LinearLayout home, settings, info, logout;
     private static final int REQUEST_CODE_SELECT_IMAGE = 1;
     private static final String TAG = "ControlConfig";
-    Button btnAvatar, btnConfigurar;
-    ImageView imgAvatarConfig;
-    EditText txtAliasConfig, txtNombreConfig, txtApellidosconfig, txtPassConfig, txtConfirmPassConfig;
-    String alias, nombre, apellidos, pass, newPass;
-    ConnectionManager connectionManager = new ConnectionManager();
-    Usuario user = Usuario.getInstance();
+    private Button btnAvatar, btnConfigurar;
+    private ImageView imgAvatarConfig;
+    private EditText txtAliasConfig, txtNombreConfig, txtApellidosconfig, txtPassConfig, txtConfirmPassConfig;
+    private String alias, nombre, apellidos, pass, newPass;
+    private ConnectionManager connectionManager = new ConnectionManager();
+    private Usuario user = Usuario.getInstance();
 
     @SuppressLint("WrongThread")
     @Override
@@ -51,8 +52,15 @@ public class ControlConfig extends AppCompatActivity {
         settings = findViewById(R.id.settings);
         info = findViewById(R.id.info);
         logout = findViewById(R.id.exit);
+        navAvatar = findViewById(R.id.nav_avatar);
+        navUser = findViewById(R.id.nav_user);
+        navNombre = findViewById(R.id.nav_nameuser);
+        loadImageFromUrl(user.getAvatar(),navAvatar);
+        navUser.setText(user.getAlias());
+        navNombre.setText(user.getNombre() + " " + user.getApellidos());
 
         imgAvatarConfig = findViewById(R.id.imgAvatarC);
+        loadImageFromUrl(user.getAvatar(),imgAvatarConfig);
         txtAliasConfig = findViewById(R.id.aliasEditText);
         txtNombreConfig = findViewById(R.id.nombreEditText);
         txtApellidosconfig = findViewById(R.id.apellidosEditText);

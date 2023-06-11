@@ -12,11 +12,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.app_androidmm.R;
 import com.example.app_androidmm.database.ConnectionManager;
 import com.example.app_androidmm.database.Pelicula;
+import com.example.app_androidmm.database.Usuario;
 import com.squareup.picasso.Picasso;
 
 import java.sql.ResultSet;
@@ -29,25 +31,69 @@ import static com.example.app_androidmm.utilidades.Utilidades.*;
 public class ControlRecomendar extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_EXTERNAL_STORAGE = 1;
     static final String TAG = "RecomendarControl";
-    ImageButton btnBuscar;
-    EditText buscador;
-    Spinner condiciones;
-    ConnectionManager connectionManager = new ConnectionManager();
-    Pelicula pelicula = Pelicula.getInstance();
-    List<Pelicula> peliculas;
+    private AdaptadorCompartir adaptadorCompartir;
+    private ImageButton btnBuscar;
+    private ImageView menu, navAvatar;
+    private DrawerLayout drawerLayout;
+    private LinearLayout home, settings, info, logout;
+    private TextView navUser, navNombre;
+    private EditText buscador;
+    private Spinner condiciones;
+    private ConnectionManager connectionManager = new ConnectionManager();
+    private List<Pelicula> listaPeliculas;
+    private RecyclerView recyclerView;
+    private Usuario user = Usuario.getInstance();
+    private Pelicula pelicula = new Pelicula();
+    private int position;
 
-    RecyclerView recyclerView;
-    int position;
-
-    @SuppressLint({"WrongThread", "MissingInflatedId"})
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pagina_recomendar);
+        System.out.println(user.toString());
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+        menu = findViewById(R.id.navigation_menu);
+        home = findViewById(R.id.ly_home);
+        settings = findViewById(R.id.settings);
+        info = findViewById(R.id.info);
+        logout = findViewById(R.id.exit);
+        navAvatar = findViewById(R.id.nav_avatar);
+
+
+        navUser = findViewById(R.id.nav_user);
+        navNombre = findViewById(R.id.nav_nameuser);
+        loadImageFromUrl(user.getAvatar(),navAvatar);
+        navUser.setText(user.getAlias());
+        navNombre.setText(user.getNombre() + " " + user.getApellidos());
+
+        menu.setOnClickListener(view -> {
+            openDrawer(drawerLayout);
+        });
+
+        home.setOnClickListener(view -> {
+            redirectActivity(this,ControlBienvenido.class);
+        });
+
+        settings.setOnClickListener(view -> {
+            redirectActivity(this, ControlConfig.class);
+        });
+
+        info.setOnClickListener(view -> {
+            redirectActivity(this, ControlInfo.class);
+        });
+
+        logout.setOnClickListener(view -> {
+            Toast.makeText(this,"Has cerrado sesión correctamente", Toast.LENGTH_SHORT);
+            user = null; // Borramos los datos del usuario
+            finish();
+        });
+
         buscador = findViewById(R.id.txtSearchP);
         condiciones = findViewById(R.id.spinnerSearchByP);
         btnBuscar = findViewById(R.id.btnBuscarP);
-        peliculas = new ArrayList<>();
+        listaPeliculas = new ArrayList<>();
 
         recyclerView = findViewById(R.id.recyclerView);
 
@@ -76,7 +122,7 @@ public class ControlRecomendar extends AppCompatActivity {
                         if (validaAnio(busca)) {
                             query += " AND EXTRACT(YEAR FROM fechapublicacion) = '" + busca +"'";
                         } else {
-                            Toast.makeText(ControlRecomendar.this, "Año introducido incorrecto.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "Año introducido incorrecto.", Toast.LENGTH_SHORT).show();
                             return;
                         }
                         break;
@@ -87,9 +133,17 @@ public class ControlRecomendar extends AppCompatActivity {
                     connectionManager.executeQuery(finalQuery, new ConnectionManager.QueryCallback() {
                         @Override
                         public void onQueryCompleted(ResultSet resultSet, int rowsAffected) {
+                            runOnUiThread(() -> {
+                                if (adaptadorCompartir != null) {
+                                    adaptadorCompartir.clearViews();
+                                    adaptadorCompartir.notifyDataSetChanged();
+                                }
+                            });
+                            boolean resultados = false;
                             try {
                                 while (resultSet.next()) {
                                     Pelicula p = new Pelicula();
+                                    p.setPkPelicula(resultSet.getInt("pkpelicula"));
                                     p.setTitulo(resultSet.getString("titulo"));
                                     p.setDescripcion(resultSet.getString("descripcion"));
                                     p.setRating((float) resultSet.getDouble("rating"));
@@ -101,19 +155,21 @@ public class ControlRecomendar extends AppCompatActivity {
                                     p.setProtagonista(resultSet.getString("protagonista"));
                                     p.setPlataforma(resultSet.getString("plataforma"));
                                     Log.d(TAG, p.toString());
-                                    peliculas.add(p);
+                                    listaPeliculas.add(p);
+                                    resultados = true;
                                 }
+                                System.out.println("Peliculas cargadas: " + rowsAffected);
+                                boolean finalResultados = resultados;
 
                                 runOnUiThread(() -> {
-                                    if (!peliculas.isEmpty()) {
-                                        AdaptadorCompartir adaptador = new AdaptadorCompartir(peliculas, ControlRecomendar.this);
+                                    if (finalResultados) {
+                                        adaptadorCompartir = new AdaptadorCompartir(listaPeliculas, ControlRecomendar.this);
                                         recyclerView.setHasFixedSize(true);
                                         recyclerView.setLayoutManager(new LinearLayoutManager(ControlRecomendar.this));
-                                        recyclerView.setAdapter(adaptador);
 
-                                        adaptador.setOnShareClickListener((bitmap, title, description, actor, genero, director, plataforma, adapterPosition) -> {
+                                        adaptadorCompartir.setOnShareClickListener((bitmap, title, description, actor, genero, director, plataforma, adapterPosition) -> {
                                             // Obtener la película correspondiente a la posición en el adaptador
-                                            Pelicula pelicula = adaptador.getPeliculaAtPosition(adapterPosition);
+                                            pelicula = listaPeliculas.get(adapterPosition);
                                             String imageUrl = pelicula.getImagen();
                                             if (ContextCompat.checkSelfPermission(ControlRecomendar.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                                                     != PackageManager.PERMISSION_GRANTED) {
@@ -129,6 +185,7 @@ public class ControlRecomendar extends AppCompatActivity {
                                                 });
                                             }
                                         });
+                                        recyclerView.setAdapter(adaptadorCompartir);
                                     } else {
                                         Toast.makeText(ControlRecomendar.this, "No se encontraron películas.", Toast.LENGTH_SHORT).show();
                                     }
@@ -159,8 +216,8 @@ public class ControlRecomendar extends AppCompatActivity {
         if (requestCode == PERMISSION_REQUEST_EXTERNAL_STORAGE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permiso de almacenamiento externo concedido, descargar y compartir la imagen
-                if (position >= 0 && position < peliculas.size()) {
-                    Pelicula pelicula = peliculas.get(position);
+                if (position >= 0 && position < listaPeliculas.size()) {
+                    Pelicula pelicula = listaPeliculas.get(position);
                     String imageUrl = pelicula.getImagen();
                     String title = pelicula.getTitulo();
                     String description = pelicula.getDescripcion();
@@ -180,5 +237,9 @@ public class ControlRecomendar extends AppCompatActivity {
         }
     }
 
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        closeDrawer(drawerLayout);
+    }
 }

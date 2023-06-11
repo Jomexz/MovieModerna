@@ -11,6 +11,7 @@ import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.app_androidmm.R;
@@ -23,28 +24,66 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.app_androidmm.utilidades.Utilidades.mostrarErrorCampo;
-import static com.example.app_androidmm.utilidades.Utilidades.validaAnio;
+import static com.example.app_androidmm.utilidades.Utilidades.*;
 
 public class ControlPuntuar extends AppCompatActivity {
     private AdaptadorPuntuar adaptadorPuntuar;
     private static final int PERMISSION_REQUEST_EXTERNAL_STORAGE = 1;
     static final String TAG = "PuntuarControl";
-    ImageButton btnBuscar;
-    EditText buscador;
-    Spinner condiciones;
-    ConnectionManager connectionManager = new ConnectionManager();
-    Pelicula pelicula = new Pelicula();
-    Usuario user = Usuario.getInstance();
-    List<Pelicula> listaPeliculas;
-
-    RecyclerView recyclerView;
+    private ImageButton btnBuscar;
+    private ImageView menu, navAvatar;
+    private DrawerLayout drawerLayout;
+    private LinearLayout home, settings, info, logout;
+    private TextView navUser, navNombre;
+    private EditText buscador;
+    private Spinner condiciones;
+    private ConnectionManager connectionManager = new ConnectionManager();
+    private Pelicula pelicula = new Pelicula();
+    private Usuario user = Usuario.getInstance();
+    private List<Pelicula> listaPeliculas;
+    private RecyclerView recyclerView;
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pagina_puntuar);
+        drawerLayout = findViewById(R.id.drawer_layout);
+        menu = findViewById(R.id.navigation_menu);
+        home = findViewById(R.id.ly_home);
+        settings = findViewById(R.id.settings);
+        info = findViewById(R.id.info);
+        logout = findViewById(R.id.exit);
+        navAvatar = findViewById(R.id.nav_avatar);
+        navUser = findViewById(R.id.nav_user);
+        navNombre = findViewById(R.id.nav_nameuser);
+        loadImageFromUrl(user.getAvatar(),navAvatar);
+        navUser.setText(user.getAlias());
+        navNombre.setText(user.getNombre() + " " + user.getApellidos());
+
+        menu.setOnClickListener(view -> {
+            openDrawer(drawerLayout);
+        });
+
+        home.setOnClickListener(view -> {
+            redirectActivity(this,ControlBienvenido.class);
+        });
+
+        settings.setOnClickListener(view -> {
+            redirectActivity(this, ControlConfig.class);
+        });
+
+        info.setOnClickListener(view -> {
+            redirectActivity(this, ControlInfo.class);
+        });
+
+        logout.setOnClickListener(view -> {
+            Toast.makeText(this,"Has cerrado sesión correctamente", Toast.LENGTH_SHORT);
+            user = null; // Borramos los datos del usuario
+            redirectActivity(this, MainActivity.class);
+
+        });
+
         btnBuscar = findViewById(R.id.btnBuscarP);
         buscador = findViewById(R.id.txtSearchP);
         condiciones = findViewById(R.id.spinnerSearchByP);
@@ -201,5 +240,11 @@ public class ControlPuntuar extends AppCompatActivity {
         });
 
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        closeDrawer(drawerLayout);
     }
 }

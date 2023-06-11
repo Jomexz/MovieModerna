@@ -30,12 +30,10 @@ import static com.example.app_androidmm.utilidades.Utilidades.loadImageFromUrl;
 public class AdaptadorCompartir extends RecyclerView.Adapter<AdaptadorCompartir.ViewHolder> {
     public static final int PERMISSION_REQUEST_EXTERNAL_STORAGE = 1;
     private List<Pelicula> pData;
-    private LayoutInflater pInflater;
     private Context context;
     private OnShareClickListener onShareClickListener;
 
     public AdaptadorCompartir(List<Pelicula> pData, Context context) {
-        this.pInflater = LayoutInflater.from(context);
         this.context = context;
         this.pData = pData;
     }
@@ -44,14 +42,18 @@ public class AdaptadorCompartir extends RecyclerView.Adapter<AdaptadorCompartir.
         this.onShareClickListener = listener;
     }
 
+    public void clearViews() {
+        pData.clear();
+        notifyDataSetChanged();
+    }
     @Override
     public int getItemCount() {
         return pData.size();
     }
 
     @Override
-    public AdaptadorCompartir.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = pInflater.inflate(R.layout.pelicula_compartir, parent, false);
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.pelicula_compartir, parent, false);
         return new AdaptadorCompartir.ViewHolder(view);
     }
 
