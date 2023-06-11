@@ -29,6 +29,13 @@ import com.example.app_androidmm.database.ConnectionManager;
 import com.example.app_androidmm.database.Pelicula;
 import com.example.app_androidmm.database.Usuario;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.services.youtube.YouTube;
+import com.google.api.services.youtube.model.SearchListResponse;
+import com.google.api.services.youtube.model.SearchResult;
+import com.google.api.services.youtube.model.SearchResultSnippet;
+import com.google.api.services.youtube.model.Thumbnail;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
@@ -52,17 +59,50 @@ import static com.example.app_androidmm.interfaz.ControlRegistro.*;
  * @author Jose
  */
 public class Utilidades {
-
     public static final int REQUEST_IMAGE_GALLERY = 1;
     public static final int REQUEST_IMAGE_CAMERA = 2;
     public static final int REQUEST_IMAGE_FILES = 3;
     public static final int REQUEST_IMAGE_PICKER = 1;
+
+    public static String getTrailer(String title) {
+        String API_KEY = "AIzaSyCx3cO-BR_E9WqV87hCVks4WOJ8yW-9hxg"; // API Key de YouTube
+        try {
+            YouTube youtube = new YouTube.Builder(new NetHttpTransport(), new JacksonFactory(), request -> {
+            })
+                    .setApplicationName("MovieModerna")
+                    .build();
+
+            YouTube.Search.List searchRequest = youtube.search().list("snippet");
+            searchRequest.setKey(API_KEY);
+            searchRequest.setQ(title); // Título del video que deseas buscar
+            searchRequest.setType("video");
+            searchRequest.setMaxResults(1L);
+
+            SearchListResponse searchResponse = searchRequest.execute();
+            List<SearchResult> searchResults = searchResponse.getItems();
+
+            if (searchResults != null && !searchResults.isEmpty()) {
+                SearchResult videoResult = searchResults.get(0);
+                SearchResultSnippet snippet = videoResult.getSnippet();
+                Thumbnail thumbnail = snippet.getThumbnails().getDefault();
+                String videoId = videoResult.getId().getVideoId();
+                String videoLink = "https://www.youtube.com/watch?v=" + videoId;
+
+                return videoLink;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     public static void openDrawer(DrawerLayout drawerLayout) {
         drawerLayout.openDrawer(GravityCompat.START);
     }
 
     public static void closeDrawer(DrawerLayout drawerLayout) {
-        if(drawerLayout.isDrawerOpen(GravityCompat.START)) {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         }
     }
@@ -88,7 +128,8 @@ public class Utilidades {
                     "\nActor principal: " + actor +
                     "\nGénero: " + genero +
                     "\nDirector: " + director +
-                    "\nPlataforma de Streaming: " + plataforma);
+                    "\nPlataforma de Streaming: " + plataforma +
+                    "\nTrailer: " + getTrailer(title + "pelicula " + director + "trailer español"));
             shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
 
             try {
@@ -132,6 +173,7 @@ public class Utilidades {
 
         return null;
     }
+
     public static void descargarYCompartirImagen(String TAG, Context context, String imageUrl, String title, String description, String actor, String genero, String director, String plataforma) {
         new AsyncTask<Void, Void, Bitmap>() {
             @Override
@@ -147,7 +189,10 @@ public class Utilidades {
             @Override
             protected void onPostExecute(Bitmap bitmap) {
                 if (bitmap != null) {
-                    compartirPelicula(context, bitmap, title, description, actor, genero, director, plataforma);
+                    new Thread(() -> {
+                        compartirPelicula(context, bitmap, title, description, actor, genero, director, plataforma);
+                    }).start();
+
                 }
             }
         }.execute();
@@ -177,7 +222,7 @@ public class Utilidades {
     }
 
     // Metodo para pasar un date a local date
-    public static LocalDate dateToLocalDate (java.sql.Date fechaPublicacion) {
+    public static LocalDate dateToLocalDate(java.sql.Date fechaPublicacion) {
         // Convierte la fecha de SQL a Instant
         Instant instant = Instant.ofEpochMilli(fechaPublicacion.getTime());
 
@@ -238,8 +283,6 @@ public class Utilidades {
 
         return hexBuilder.toString();
     }
-
-
 
 
     // Metodo para validar los valores del formulario
@@ -324,7 +367,6 @@ public class Utilidades {
 
         activity.startActivityForResult(chooserIntent, requestCode);
     }
-
 
 
     public static void showImagePickerDialog(Context context, Activity activity) {
