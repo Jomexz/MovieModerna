@@ -31,11 +31,13 @@ public class AdaptadorCompartir extends RecyclerView.Adapter<AdaptadorCompartir.
     public static final int PERMISSION_REQUEST_EXTERNAL_STORAGE = 1;
     private List<Pelicula> pData;
     private Context context;
+    private Activity activity;
     private OnShareClickListener onShareClickListener;
 
-    public AdaptadorCompartir(List<Pelicula> pData, Context context) {
+    public AdaptadorCompartir(List<Pelicula> pData, Context context, Activity activity) {
         this.context = context;
         this.pData = pData;
+        this.activity = activity;
     }
 
     public void setOnShareClickListener(OnShareClickListener listener) {
@@ -60,25 +62,21 @@ public class AdaptadorCompartir extends RecyclerView.Adapter<AdaptadorCompartir.
     @Override
     public void onBindViewHolder(final AdaptadorCompartir.ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
         holder.bindData(pData.get(position));
-        holder.shareButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (onShareClickListener != null) {
-                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                            != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions((Activity) context,
-                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                PERMISSION_REQUEST_EXTERNAL_STORAGE);
-                    } else {
-                        onShareClickListener.onShareClick(((BitmapDrawable) holder.poster.getDrawable()).getBitmap(),
-                                pData.get(position).getTitulo(), pData.get(position).getDescripcion(), pData.get(position).getProtagonista(), pData.get(position).getGenero(),
-                                pData.get(position).getDirector(), pData.get(position).getPlataforma(), position);
-                    }
+        holder.shareButton.setOnClickListener(view -> {
+            if (onShareClickListener != null) {
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_DENIED) {
+                    ActivityCompat.requestPermissions(activity,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            PERMISSION_REQUEST_EXTERNAL_STORAGE);
+                } else {
+                    onShareClickListener.onShareClick(((BitmapDrawable) holder.poster.getDrawable()).getBitmap(),
+                            pData.get(position).getTitulo(), pData.get(position).getDescripcion(), pData.get(position).getProtagonista(), pData.get(position).getGenero(),
+                            pData.get(position).getDirector(), pData.get(position).getPlataforma(), position);
                 }
             }
         });
     }
-
 
 
     public void setItems(List<Pelicula> items) {

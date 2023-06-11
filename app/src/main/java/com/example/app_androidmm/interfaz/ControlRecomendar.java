@@ -29,7 +29,7 @@ import java.util.List;
 import static com.example.app_androidmm.utilidades.Utilidades.*;
 
 public class ControlRecomendar extends AppCompatActivity {
-    private static final int PERMISSION_REQUEST_EXTERNAL_STORAGE = 1;
+    private static final int PERMISSION_REQUEST_EXTERNAL_STORAGE = 100;
     static final String TAG = "RecomendarControl";
     private AdaptadorCompartir adaptadorCompartir;
     private ImageButton btnBuscar;
@@ -163,7 +163,7 @@ public class ControlRecomendar extends AppCompatActivity {
 
                                 runOnUiThread(() -> {
                                     if (finalResultados) {
-                                        adaptadorCompartir = new AdaptadorCompartir(listaPeliculas, ControlRecomendar.this);
+                                        adaptadorCompartir = new AdaptadorCompartir(listaPeliculas, ControlRecomendar.this, ControlRecomendar.this);
                                         recyclerView.setHasFixedSize(true);
                                         recyclerView.setLayoutManager(new LinearLayoutManager(ControlRecomendar.this));
 
@@ -207,8 +207,6 @@ public class ControlRecomendar extends AppCompatActivity {
         });
     }
 
-
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -226,8 +224,7 @@ public class ControlRecomendar extends AppCompatActivity {
                     String director = pelicula.getDirector();
                     String plataforma = pelicula.getPlataforma();
                     runOnUiThread(() -> {
-                        descargarYCompartirImagen(TAG,this, imageUrl, title, description, actor, genero, director, plataforma);
-
+                        descargarYCompartirImagen(TAG, ControlRecomendar.this, imageUrl, title, description, actor, genero, director, plataforma);
                     });
                 }
             } else {
@@ -236,6 +233,7 @@ public class ControlRecomendar extends AppCompatActivity {
             }
         }
     }
+
 
     @Override
     protected void onPause() {

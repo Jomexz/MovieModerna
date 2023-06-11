@@ -177,7 +177,7 @@ public class ControlGenerar extends AppCompatActivity {
                                 recyclerView.setLayoutManager(new LinearLayoutManager(ControlGenerar.this));
                             }
                             if(finalResultados) {
-                                adaptadorCompartir = new AdaptadorCompartir(mejoresRecomendaciones, ControlGenerar.this);
+                                adaptadorCompartir = new AdaptadorCompartir(mejoresRecomendaciones, ControlGenerar.this, ControlGenerar.this);
                                 recyclerView.setAdapter(adaptadorCompartir);
                                 adaptadorCompartir.setOnShareClickListener((bitmap, title, description, actor, genero, director, plataforma, adapterPosition) -> {
                                     // Obtener la película correspondiente a la posición en el adaptador

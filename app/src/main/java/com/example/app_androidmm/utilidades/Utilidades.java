@@ -15,6 +15,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -131,6 +132,26 @@ public class Utilidades {
 
         return null;
     }
+    public static void descargarYCompartirImagen(String TAG, Context context, String imageUrl, String title, String description, String actor, String genero, String director, String plataforma) {
+        new AsyncTask<Void, Void, Bitmap>() {
+            @Override
+            protected Bitmap doInBackground(Void... voids) {
+                try {
+                    return Picasso.get().load(imageUrl).get();
+                } catch (Exception e) {
+                    Log.e(TAG, "Error al descargar la imagen: " + e.getMessage());
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+                if (bitmap != null) {
+                    compartirPelicula(context, bitmap, title, description, actor, genero, director, plataforma);
+                }
+            }
+        }.execute();
+    }
 
     public static void uploadImageToFirebase(Uri imageUri, Usuario user, String TAG) {
         // Crear una referencia al almacenamiento de Firebase y especificar la ubicación y el nombre del archivo (CAMBIAR POR images/ EN CASO DE FALLO
@@ -153,17 +174,6 @@ public class Utilidades {
                     // Error al subir la imagen a Firebase Storage
                     Log.e(TAG, "Error al subir la imagen a Firebase: " + e.getMessage());
                 });
-    }
-
-    public static void descargarYCompartirImagen(String TAG, Context context, String imageUrl, String title, String description, String actor, String genero, String director, String plataforma) {
-        new Thread(() -> {
-            try {
-                Bitmap bitmap = Picasso.get().load(imageUrl).get();
-                compartirPelicula(context, bitmap, title, description, actor, genero, director, plataforma);
-            } catch (Exception e) {
-                Log.e(TAG, "Error al descargar la imagen: " + e.getMessage());
-            }
-        }).start();
     }
 
     // Metodo para pasar un date a local date
