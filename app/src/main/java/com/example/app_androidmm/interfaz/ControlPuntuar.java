@@ -33,7 +33,7 @@ public class ControlPuntuar extends AppCompatActivity {
     private ImageButton btnBuscar;
     private ImageView menu, navAvatar;
     private DrawerLayout drawerLayout;
-    private LinearLayout home, settings, info, logout;
+    private LinearLayout home, settings, info, logout, share;
     private TextView navUser, navNombre;
     private EditText buscador;
     private Spinner condiciones;
@@ -54,6 +54,7 @@ public class ControlPuntuar extends AppCompatActivity {
         settings = findViewById(R.id.settings);
         info = findViewById(R.id.info);
         logout = findViewById(R.id.exit);
+        share = findViewById(R.id.share);
         navAvatar = findViewById(R.id.nav_avatar);
         navUser = findViewById(R.id.nav_user);
         navNombre = findViewById(R.id.nav_nameuser);
@@ -82,6 +83,20 @@ public class ControlPuntuar extends AppCompatActivity {
             user = null; // Borramos los datos del usuario
             redirectActivity(this, MainActivity.class);
 
+        });
+
+        share.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_SEND);
+            intent.putExtra(Intent.EXTRA_TEXT, "¿Quieres disfrutar de una experiencia cinematográfica única junto a tus amigos? " +
+                    "Descubre películas increíbles y genera recomendaciones personalizadas con MovieModerna. ¡Explora el mundo del cine y comparte tus descubrimientos!" +
+                    " Haz que cada noche de cine sea especial. Descarga MovieModerna ahora mismo: [link]");
+            intent.setType("text/plain");
+            if(intent.resolveActivity(getPackageManager()) != null) {
+                startActivity(intent);
+            } else {
+                Toast.makeText(this,"No hay permisos", Toast.LENGTH_SHORT);
+            }
         });
 
         btnBuscar = findViewById(R.id.btnBuscarP);

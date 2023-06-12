@@ -2,6 +2,7 @@ package com.example.app_androidmm.interfaz;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,7 +32,7 @@ public class ControlGenerar extends AppCompatActivity {
     private final String TAG = "GenerarControl";
     private DrawerLayout drawerLayout;
     private ImageView menu, navAvatar;
-    private LinearLayout home, settings, info, logout;
+    private LinearLayout home, settings, info, logout, share;
     private TextView navUser, navNombre;
     private ConnectionManager connectionManager = new ConnectionManager();
     private AdaptadorCompartir adaptadorCompartir;
@@ -55,6 +56,7 @@ public class ControlGenerar extends AppCompatActivity {
         settings = findViewById(R.id.settings);
         info = findViewById(R.id.info);
         logout = findViewById(R.id.exit);
+        share = findViewById(R.id.share);
         navAvatar = findViewById(R.id.nav_avatar);
         navUser = findViewById(R.id.nav_user);
         navNombre = findViewById(R.id.nav_nameuser);
@@ -83,6 +85,20 @@ public class ControlGenerar extends AppCompatActivity {
             user = null; // Borramos los datos del usuario
             redirectActivity(this, MainActivity.class);
 
+        });
+
+        share.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_SEND);
+            intent.putExtra(Intent.EXTRA_TEXT, "¿Quieres disfrutar de una experiencia cinematográfica única junto a tus amigos? " +
+                    "Descubre películas increíbles y genera recomendaciones personalizadas con MovieModerna. ¡Explora el mundo del cine y comparte tus descubrimientos!" +
+                    " Haz que cada noche de cine sea especial. Descarga MovieModerna ahora mismo: [link]");
+            intent.setType("text/plain");
+            if(intent.resolveActivity(getPackageManager()) != null) {
+                startActivity(intent);
+            } else {
+                Toast.makeText(this,"No hay permisos", Toast.LENGTH_SHORT);
+            }
         });
 
         recyclerView = findViewById(R.id.recyclerView);

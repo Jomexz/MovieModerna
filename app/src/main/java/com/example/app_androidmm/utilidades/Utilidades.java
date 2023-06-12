@@ -53,6 +53,7 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import static androidx.core.content.ContextCompat.startActivity;
 import static com.example.app_androidmm.interfaz.ControlRegistro.*;
 
 /**
@@ -111,6 +112,33 @@ public class Utilidades {
         Intent intent = new Intent(activity, secondActivity);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(intent);
+    }
+    public static void compartirPrueba(Context context,String title, String descripcion, String actor, String genero, String director, String plataforma){
+
+        new Thread(() -> {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_SEND);
+            // Se define el buscador de youtube
+            String buscador = title + "pelicula";
+            if(!director.equals("Desconocido")) {
+                buscador+= director + " trailer español";
+            }
+            buscador+=" trailer español";
+            intent.putExtra(Intent.EXTRA_TEXT, "Título: " + title +
+                    "\nDescripción: " + descripcion +
+                    "\nActor principal: " + actor +
+                    "\nGénero: " + genero +
+                    "\nDirector: " + director +
+                    "\nPlataforma de Streaming: " + plataforma +
+                    "\nTrailer: " + getTrailer(buscador));
+            if(intent.resolveActivity(context.getPackageManager()) != null) {
+                context.startActivity(intent);
+            } else {
+//            Toast.makeText(context,"No hay permisos", Toast.LENGTH_SHORT);
+                System.out.println("No hay permisos");
+            }
+        }).start();
+
     }
 
     public static void compartirPelicula(Context context, Bitmap bitmap, String title, String description, String actor, String genero, String director, String plataforma) {
@@ -196,6 +224,7 @@ public class Utilidades {
                 if (bitmap != null) {
                     new Thread(() -> {
                         compartirPelicula(context, bitmap, title, description, actor, genero, director, plataforma);
+//                        compartirPrueba(context,title,description,actor,genero,director,plataforma);
                     }).start();
 
                 }

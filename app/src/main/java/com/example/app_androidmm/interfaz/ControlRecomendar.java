@@ -3,6 +3,7 @@ package com.example.app_androidmm.interfaz;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -35,7 +36,7 @@ public class ControlRecomendar extends AppCompatActivity {
     private ImageButton btnBuscar;
     private ImageView menu, navAvatar;
     private DrawerLayout drawerLayout;
-    private LinearLayout home, settings, info, logout;
+    private LinearLayout home, settings, info, logout, share;
     private TextView navUser, navNombre;
     private EditText buscador;
     private Spinner condiciones;
@@ -59,6 +60,7 @@ public class ControlRecomendar extends AppCompatActivity {
         settings = findViewById(R.id.settings);
         info = findViewById(R.id.info);
         logout = findViewById(R.id.exit);
+        share = findViewById(R.id.share);
         navAvatar = findViewById(R.id.nav_avatar);
 
 
@@ -88,6 +90,20 @@ public class ControlRecomendar extends AppCompatActivity {
             Toast.makeText(this,"Has cerrado sesión correctamente", Toast.LENGTH_SHORT);
             user = null; // Borramos los datos del usuario
             finish();
+        });
+
+        share.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_SEND);
+            intent.putExtra(Intent.EXTRA_TEXT, "¿Quieres disfrutar de una experiencia cinematográfica única junto a tus amigos? " +
+                    "Descubre películas increíbles y genera recomendaciones personalizadas con MovieModerna. ¡Explora el mundo del cine y comparte tus descubrimientos!" +
+                    " Haz que cada noche de cine sea especial. Descarga MovieModerna ahora mismo: [link]");
+            intent.setType("text/plain");
+            if(intent.resolveActivity(getPackageManager()) != null) {
+                startActivity(intent);
+            } else {
+                Toast.makeText(this,"No hay permisos", Toast.LENGTH_SHORT);
+            }
         });
 
         buscador = findViewById(R.id.txtSearchP);
@@ -181,9 +197,34 @@ public class ControlRecomendar extends AppCompatActivity {
                                                 // El permiso de almacenamiento ya está concedido, descargar y compartir la imagen
                                                 runOnUiThread(() -> {
                                                     descargarYCompartirImagen(TAG,ControlRecomendar.this, imageUrl, title, description, actor, genero, director, plataforma);
-
+//                                                    compartirPrueba(ControlRecomendar.this,title,description,actor,genero,director,plataforma);
                                                 });
                                             }
+//                                            new Thread(() -> {
+//                                                Intent intent = new Intent();
+//                                                intent.setAction(Intent.ACTION_SEND);
+//                                                String buscador = title + "pelicula";
+//                                                if(!director.equals("Desconocido")) {
+//                                                    buscador+= director + " trailer español";
+//                                                }
+//                                                buscador+=" trailer español";
+//                                                intent.putExtra(Intent.EXTRA_TEXT, "Título: " + title +
+//                                                        "\nDescripción: " + description +
+//                                                        "\nActor principal: " + actor +
+//                                                        "\nGénero: " + genero +
+//                                                        "\nDirector: " + director +
+//                                                        "\nPlataforma de Streaming: " + plataforma +
+//                                                        "\nTrailer: " + getTrailer(buscador));
+//                                                intent.setType("text/plain");
+//                                                if(intent.resolveActivity(getPackageManager()) != null) {
+//                                                    startActivity(intent);
+//                                                } else {
+//
+//                                                    Toast.makeText(ControlRecomendar.this,"No hay permisos", Toast.LENGTH_SHORT);
+//                                                }
+//                                            }).start();
+
+
                                         });
                                         recyclerView.setAdapter(adaptadorCompartir);
                                     } else {
