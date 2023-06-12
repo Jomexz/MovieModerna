@@ -121,7 +121,12 @@ public class Utilidades {
             // Crear el Intent para compartir
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("image/*");
-
+            // Se define el buscador de youtube
+            String buscador = title + "pelicula";
+            if(!director.equals("Desconocido")) {
+                buscador+= director + " trailer español";
+            }
+            buscador+=" trailer español";
             // Agregar los datos a compartir
             shareIntent.putExtra(Intent.EXTRA_TEXT, "Título: " + title +
                     "\nDescripción: " + description +
@@ -129,7 +134,7 @@ public class Utilidades {
                     "\nGénero: " + genero +
                     "\nDirector: " + director +
                     "\nPlataforma de Streaming: " + plataforma +
-                    "\nTrailer: " + getTrailer(title + "pelicula " + director + "trailer español"));
+                    "\nTrailer: " + getTrailer(buscador));
             shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
 
             try {

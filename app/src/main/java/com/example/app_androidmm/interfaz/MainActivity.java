@@ -44,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
             }
             Usuario user = Usuario.getInstance();
 
-            // Llamar al método executeQuery desde aquí
             Long tiempo = System.currentTimeMillis();
             connectionManager.executeQuery("SELECT * FROM usuario where alias like '" + alias + "'", new ConnectionManager.QueryCallback() {
                 @Override
@@ -71,24 +70,9 @@ public class MainActivity extends AppCompatActivity {
                                 System.out.println("Se ha iniciado sesión");
                                 redirectActivity(MainActivity.this,ControlBienvenido.class);
                                 finish();
-//                                            runOnUiThread(new Runnable() {
-//                                                @Override
-//                                                public void run() {
-//                                                    System.out.println("Se ha iniciado sesión");
-//                                                    Intent intent = new Intent(MainActivity.this, BienvenidoControl.class);
-//                                                    startActivity(intent);
-//                                                }
-//                                            });
                             } else {
                                 System.out.println("No se ha inciado sesión");
                                 mostrarErrorCampo(MainActivity.this, "Contraseña o usuario incorrectos.", "Error en la introducción de datos");
-//                                            runOnUiThread(new Runnable() {
-//                                                @Override
-//                                                public void run() {
-//                                                    System.out.println("No se ha inciado sesión");
-//                                                    mostrarErrorCampo(MainActivity.this, "Contraseña o usuario incorrectos.", "Error en la introducción de datos");
-//                                                }
-//                                            });
                             }
                         }
                     } catch (SQLException e) {
