@@ -5,9 +5,9 @@
               android:layout_height="wrap_content"
               android:padding="20dp"
               android:id="@+id/toolbar"
-              android:background="@color/navigationColor"
               android:gravity="center_vertical"
->
+              android:background="@color/navigationColor">
+
     <ImageView android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:id="@+id/navigation_menu"
