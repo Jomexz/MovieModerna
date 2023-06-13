@@ -22,6 +22,7 @@ import com.example.app_androidmm.database.Pelicula;
 import com.example.app_androidmm.database.Usuario;
 import com.squareup.picasso.Picasso;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ public class ControlRecomendar extends AppCompatActivity {
 
         navUser = findViewById(R.id.nav_user);
         navNombre = findViewById(R.id.nav_nameuser);
-        loadImageFromUrl(user.getAvatar(),navAvatar);
+        loadImageFromUrl(user.getAvatar(), navAvatar);
         navUser.setText(user.getAlias());
         navNombre.setText(user.getNombre() + " " + user.getApellidos());
 
@@ -75,7 +76,7 @@ public class ControlRecomendar extends AppCompatActivity {
         });
 
         home.setOnClickListener(view -> {
-            redirectActivity(this,ControlBienvenido.class);
+            redirectActivity(this, ControlBienvenido.class);
         });
 
         settings.setOnClickListener(view -> {
@@ -87,7 +88,7 @@ public class ControlRecomendar extends AppCompatActivity {
         });
 
         logout.setOnClickListener(view -> {
-            Toast.makeText(this,"Has cerrado sesión correctamente", Toast.LENGTH_SHORT);
+            Toast.makeText(this, "Has cerrado sesión correctamente", Toast.LENGTH_SHORT);
             user = null; // Borramos los datos del usuario
             finish();
         });
@@ -99,10 +100,10 @@ public class ControlRecomendar extends AppCompatActivity {
                     "Descubre películas increíbles y genera recomendaciones personalizadas con MovieModerna. ¡Explora el mundo del cine y comparte tus descubrimientos!" +
                     " Haz que cada noche de cine sea especial. Descarga MovieModerna ahora mismo: [link]");
             intent.setType("text/plain");
-            if(intent.resolveActivity(getPackageManager()) != null) {
+            if (intent.resolveActivity(getPackageManager()) != null) {
                 startActivity(intent);
             } else {
-                Toast.makeText(this,"No hay permisos", Toast.LENGTH_SHORT);
+                Toast.makeText(this, "No hay permisos", Toast.LENGTH_SHORT);
             }
         });
 
@@ -125,18 +126,18 @@ public class ControlRecomendar extends AppCompatActivity {
                 // Verificar el criterio de búsqueda seleccionado
                 switch (criterio) {
                     case "POR TÍTULO":
-                        query += " AND titulo LIKE '%" + busca +"%'";
+                        query += " AND titulo LIKE '%" + busca + "%'";
                         break;
                     case "POR DIRECTOR":
-                        query += " AND director LIKE '%" + busca +"%'";
+                        query += " AND director LIKE '%" + busca + "%'";
                         break;
                     case "POR PROTAGONISTA":
-                        query += " AND protagonista LIKE '%" + busca +"%'";
+                        query += " AND protagonista LIKE '%" + busca + "%'";
                         break;
                     case "POR AÑO DE ESTRENO":
                         // Verificar si se ingresó un año de búsqueda válido
                         if (validaAnio(busca)) {
-                            query += " AND EXTRACT(YEAR FROM fechapublicacion) = '" + busca +"'";
+                            query += " AND EXTRACT(YEAR FROM fechapublicacion) = '" + busca + "'";
                         } else {
                             Toast.makeText(this, "Año introducido incorrecto.", Toast.LENGTH_SHORT).show();
                             return;
@@ -183,46 +184,17 @@ public class ControlRecomendar extends AppCompatActivity {
                                         recyclerView.setHasFixedSize(true);
                                         recyclerView.setLayoutManager(new LinearLayoutManager(ControlRecomendar.this));
 
-                                        adaptadorCompartir.setOnShareClickListener((bitmap, title, description, actor, genero, director, plataforma, adapterPosition) -> {
+                                        adaptadorCompartir.setOnShareClickListener((bitmap, title, description, actor, genero, director, plataforma, fechapublicacion, adapterPosition) -> {
                                             // Obtener la película correspondiente a la posición en el adaptador
                                             pelicula = listaPeliculas.get(adapterPosition);
                                             String imageUrl = pelicula.getImagen();
-                                            if (ContextCompat.checkSelfPermission(ControlRecomendar.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                                    != PackageManager.PERMISSION_GRANTED) {
-                                                // Solicitar el permiso de almacenamiento
-                                                ActivityCompat.requestPermissions(ControlRecomendar.this,
-                                                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                                        PERMISSION_REQUEST_EXTERNAL_STORAGE);
-                                            } else {
-                                                // El permiso de almacenamiento ya está concedido, descargar y compartir la imagen
-                                                runOnUiThread(() -> {
-                                                    descargarYCompartirImagen(TAG,ControlRecomendar.this, imageUrl, title, description, actor, genero, director, plataforma);
+
+                                            // El permiso de almacenamiento ya está concedido, descargar y compartir la imagen
+                                            runOnUiThread(() -> {
+                                                descargarYCompartirImagen(TAG, ControlRecomendar.this, imageUrl, title, description, actor, genero, director, plataforma, fechapublicacion);
 //                                                    compartirPrueba(ControlRecomendar.this,title,description,actor,genero,director,plataforma);
-                                                });
-                                            }
-//                                            new Thread(() -> {
-//                                                Intent intent = new Intent();
-//                                                intent.setAction(Intent.ACTION_SEND);
-//                                                String buscador = title + "pelicula";
-//                                                if(!director.equals("Desconocido")) {
-//                                                    buscador+= director + " trailer español";
-//                                                }
-//                                                buscador+=" trailer español";
-//                                                intent.putExtra(Intent.EXTRA_TEXT, "Título: " + title +
-//                                                        "\nDescripción: " + description +
-//                                                        "\nActor principal: " + actor +
-//                                                        "\nGénero: " + genero +
-//                                                        "\nDirector: " + director +
-//                                                        "\nPlataforma de Streaming: " + plataforma +
-//                                                        "\nTrailer: " + getTrailer(buscador));
-//                                                intent.setType("text/plain");
-//                                                if(intent.resolveActivity(getPackageManager()) != null) {
-//                                                    startActivity(intent);
-//                                                } else {
-//
-//                                                    Toast.makeText(ControlRecomendar.this,"No hay permisos", Toast.LENGTH_SHORT);
-//                                                }
-//                                            }).start();
+                                            });
+
 
 
                                         });
@@ -235,6 +207,7 @@ public class ControlRecomendar extends AppCompatActivity {
                                 Log.e(TAG, "Error al procesar los resultados: " + e.getMessage());
                             }
                         }
+
                         @Override
                         public void onQueryFailed(String error) {
                             Log.e(TAG, error);
@@ -264,8 +237,10 @@ public class ControlRecomendar extends AppCompatActivity {
                     String genero = pelicula.getGenero();
                     String director = pelicula.getDirector();
                     String plataforma = pelicula.getPlataforma();
+                    Date fecha = pelicula.getFechaPublicacion();
+                    System.out.println("Pelicula a compartir: " + pelicula);
                     runOnUiThread(() -> {
-                        descargarYCompartirImagen(TAG, ControlRecomendar.this, imageUrl, title, description, actor, genero, director, plataforma);
+                        descargarYCompartirImagen(TAG, ControlRecomendar.this, imageUrl, title, description, actor, genero, director, plataforma, fecha);
                     });
                 }
             } else {

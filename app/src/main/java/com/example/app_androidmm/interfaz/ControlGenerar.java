@@ -21,6 +21,7 @@ import com.example.app_androidmm.database.Usuario;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Date;
 import java.sql.SQLOutput;
 import java.util.*;
 
@@ -195,7 +196,7 @@ public class ControlGenerar extends AppCompatActivity {
                             if(finalResultados) {
                                 adaptadorCompartir = new AdaptadorCompartir(mejoresRecomendaciones, ControlGenerar.this, ControlGenerar.this);
                                 recyclerView.setAdapter(adaptadorCompartir);
-                                adaptadorCompartir.setOnShareClickListener((bitmap, title, description, actor, genero, director, plataforma, adapterPosition) -> {
+                                adaptadorCompartir.setOnShareClickListener((bitmap, title, description, actor, genero, director, plataforma, fechapublicacion, adapterPosition) -> {
                                     // Obtener la película correspondiente a la posición en el adaptador
                                     Pelicula pelicula = adaptadorCompartir.getPeliculaAtPosition(adapterPosition);
                                     String imageUrl = pelicula.getImagen();
@@ -208,7 +209,7 @@ public class ControlGenerar extends AppCompatActivity {
                                     } else {
                                         // El permiso de almacenamiento ya está concedido, descargar y compartir la imagen
                                         runOnUiThread(() -> {
-                                            descargarYCompartirImagen(TAG,ControlGenerar.this, imageUrl, title, description, actor, genero, director, plataforma);
+                                            descargarYCompartirImagen(TAG,ControlGenerar.this, imageUrl, title, description, actor, genero, director, plataforma, fechapublicacion);
 
                                         });
                                     }
@@ -247,8 +248,9 @@ public class ControlGenerar extends AppCompatActivity {
                     String genero = pelicula.getGenero();
                     String director = pelicula.getDirector();
                     String plataforma = pelicula.getPlataforma();
+                    Date fecha = pelicula.getFechaPublicacion();
                     runOnUiThread(() -> {
-                        descargarYCompartirImagen(TAG,this, imageUrl, title, description, actor, genero, director, plataforma);
+                        descargarYCompartirImagen(TAG,this, imageUrl, title, description, actor, genero, director, plataforma, fecha);
 
                     });
                 }

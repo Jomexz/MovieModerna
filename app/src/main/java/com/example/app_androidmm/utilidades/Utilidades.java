@@ -5,15 +5,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -22,11 +17,8 @@ import android.util.Log;
 import android.widget.*;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import com.example.app_androidmm.database.ConnectionManager;
-import com.example.app_androidmm.database.Pelicula;
 import com.example.app_androidmm.database.Usuario;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -44,27 +36,31 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import static androidx.core.content.ContextCompat.startActivity;
-import static com.example.app_androidmm.interfaz.ControlRegistro.*;
 
 /**
  * @author Jose
  */
 public class Utilidades {
+    private static final String TAG = "Utilidades.java";
     public static final int REQUEST_IMAGE_GALLERY = 1;
     public static final int REQUEST_IMAGE_CAMERA = 2;
     public static final int REQUEST_IMAGE_FILES = 3;
+    public static final int PERMISSION_REQUEST_INTERNET = 4;
+    public static final int PERMISSION_REQUEST_READ_EXTERNAL_STORAGE = 5;
     public static final int REQUEST_IMAGE_PICKER = 1;
 
+    // Método para obtener el trailer de una película
     public static String getTrailer(String title) {
         String API_KEY = "AIzaSyCx3cO-BR_E9WqV87hCVks4WOJ8yW-9hxg"; // API Key de YouTube
         try {
@@ -113,48 +109,81 @@ public class Utilidades {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(intent);
     }
-    public static void compartirPrueba(Context context,String title, String descripcion, String actor, String genero, String director, String plataforma){
+    // Método para compartir los datos relevantes de la película
+    public static void compartirPelicula(Context context, String imageUrl, String title, String description, String actor, String genero, String director, String plataforma, Date fechapublicacion) {
+        LocalDate localDate = dateutilToLocalDate(fechapublicacion);
+        int anio = localDate.getYear();
+        // Crear el Intent para compartir
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        // Se define el buscador de youtube
+        String buscador = title + "pelicula";
+        buscador += " trailer español " + anio;
+        Log.d(TAG, buscador);
+        // Agregar los datos a compartir
+        shareIntent.putExtra(Intent.EXTRA_TEXT, "Título: " + title +
+                "\nDescripción: " + description +
+                "\nActor principal: " + actor +
+                "\nGénero: " + genero +
+                "\nDirector: " + director +
+                "\nPlataforma de Streaming: " + plataforma +
+                "\nAño de estreno: " + anio +
+                "\nTrailer: " + getTrailer(buscador) +
+                "\nURL de la imagen: " + imageUrl);
 
-        new Thread(() -> {
-            Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_SEND);
-            // Se define el buscador de youtube
-            String buscador = title + "pelicula";
-            if(!director.equals("Desconocido")) {
-                buscador+= director + " trailer español";
-            }
-            buscador+=" trailer español";
-            intent.putExtra(Intent.EXTRA_TEXT, "Título: " + title +
-                    "\nDescripción: " + descripcion +
-                    "\nActor principal: " + actor +
-                    "\nGénero: " + genero +
-                    "\nDirector: " + director +
-                    "\nPlataforma de Streaming: " + plataforma +
-                    "\nTrailer: " + getTrailer(buscador));
-            if(intent.resolveActivity(context.getPackageManager()) != null) {
-                context.startActivity(intent);
-            } else {
+        try {
+            // Iniciar la actividad de compartir
+            context.startActivity(Intent.createChooser(shareIntent, "Compartir película"));
+        } catch (Exception e) {
+            // Mostrar un mensaje de error en caso de que no se pueda compartir
+            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+            mostrarErrorCampo(context, e.getMessage(), "Error");
+        }
+
+        /*Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_TEXT, "Título: " + title +
+                "\nDescripción: " + description +
+                "\nActor principal: " + actor +
+                "\nGénero: " + genero +
+                "\nDirector: " + director +
+                "\nPlataforma de Streaming: " + plataforma +
+                "\nAño de estreno: " + anio +
+                "\nTrailer: " + getTrailer(buscador) +
+                "\nURL de la imagen: " + imageUrl);
+        intent.setType("text/plain");
+        try {
+            context.startActivity(intent);
+        } catch (Exception e) {
+            System.err.println();
+            System.out.println(e.getMessage());
+            mostrarErrorCampo(context,e.getMessage(),"Error");
+            Toast.makeText(context,e.getMessage(),Toast.LENGTH_SHORT).show();
+        }
+//        if(intent.resolveActivity(context.getPackageManager()) != null) {
+//            context.startActivity(intent);
+//        } else {
 //            Toast.makeText(context,"No hay permisos", Toast.LENGTH_SHORT);
-                System.out.println("No hay permisos");
-            }
-        }).start();
-
+//        }*/
     }
 
-    public static void compartirPelicula(Context context, Bitmap bitmap, String title, String description, String actor, String genero, String director, String plataforma) {
+    // Método para compartir películas con su imagen e información relevante
+    public static void compartirPeliculaa(Context context, Bitmap bitmap, String title, String description, String actor, String genero, String director, String plataforma, Date fechapublicacion) {
         // Guardar el bitmap en el almacenamiento local
         Uri imageUri = saveImageToStorage(context, bitmap);
-
+        LocalDate localDate = dateutilToLocalDate(fechapublicacion);
+        int anio = localDate.getYear();
         if (imageUri != null) {
             // Crear el Intent para compartir
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("image/*");
             // Se define el buscador de youtube
             String buscador = title + "pelicula";
-            if(!director.equals("Desconocido")) {
-                buscador+= director + " trailer español";
-            }
-            buscador+=" trailer español";
+//            if(!director.equals("Desconocido")) {
+//                buscador+= director + " trailer español";
+//            }
+            buscador+=" trailer español" + anio;
+            Log.d(TAG, buscador);
             // Agregar los datos a compartir
             shareIntent.putExtra(Intent.EXTRA_TEXT, "Título: " + title +
                     "\nDescripción: " + description +
@@ -207,27 +236,17 @@ public class Utilidades {
         return null;
     }
 
-    public static void descargarYCompartirImagen(String TAG, Context context, String imageUrl, String title, String description, String actor, String genero, String director, String plataforma) {
-        new AsyncTask<Void, Void, Bitmap>() {
+    public static void descargarYCompartirImagen(String TAG, Context context, String imageUrl, String title, String description, String actor, String genero, String director, String plataforma, Date fechapublicacion) {
+        new AsyncTask<Void, Void, Void>() {
             @Override
-            protected Bitmap doInBackground(Void... voids) {
+            protected Void doInBackground(Void... voids) {
                 try {
-                    return Picasso.get().load(imageUrl).get();
+                    // Simplemente realizar la llamada al método compartirPeliculaPrueba con la URL directamente
+                    compartirPelicula(context, imageUrl, title, description, actor, genero, director, plataforma, fechapublicacion);
                 } catch (Exception e) {
-                    Log.e(TAG, "Error al descargar la imagen: " + e.getMessage());
-                    return null;
+                    Log.e(TAG, "Error al compartir la película: " + e.getMessage());
                 }
-            }
-
-            @Override
-            protected void onPostExecute(Bitmap bitmap) {
-                if (bitmap != null) {
-                    new Thread(() -> {
-                        compartirPelicula(context, bitmap, title, description, actor, genero, director, plataforma);
-//                        compartirPrueba(context,title,description,actor,genero,director,plataforma);
-                    }).start();
-
-                }
+                return null;
             }
         }.execute();
     }
@@ -255,8 +274,21 @@ public class Utilidades {
                 });
     }
 
-    // Metodo para pasar un date a local date
-    public static LocalDate dateToLocalDate(java.sql.Date fechaPublicacion) {
+    // Metodo para pasar un date util a local date
+    public static LocalDate dateutilToLocalDate(Date fechaPublicacion) {
+        // Convierte la fecha de SQL a Instant
+        Instant instant = Instant.ofEpochMilli(fechaPublicacion.getTime());
+
+        // Crea una zona horaria (puedes ajustarla según tus necesidades)
+        ZoneId zonaHoraria = ZoneId.systemDefault();
+
+        // Crea un objeto LocalDate a partir del Instant y la zona horaria
+        LocalDate fechaLocal = instant.atZone(zonaHoraria).toLocalDate();
+
+        return fechaLocal;
+    }
+    // Metodo para pasar un date sql a local date
+    public static LocalDate datesqlToLocalDate(java.sql.Date fechaPublicacion) {
         // Convierte la fecha de SQL a Instant
         Instant instant = Instant.ofEpochMilli(fechaPublicacion.getTime());
 

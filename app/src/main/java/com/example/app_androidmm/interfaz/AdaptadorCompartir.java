@@ -23,6 +23,7 @@ import com.example.app_androidmm.R;
 import com.example.app_androidmm.database.Pelicula;
 
 import java.text.SimpleDateFormat;
+import java.sql.Date;
 import java.util.List;
 
 import static com.example.app_androidmm.utilidades.Utilidades.loadImageFromUrl;
@@ -72,7 +73,7 @@ public class AdaptadorCompartir extends RecyclerView.Adapter<AdaptadorCompartir.
                 } else {
                     onShareClickListener.onShareClick(((BitmapDrawable) holder.poster.getDrawable()).getBitmap(),
                             pData.get(position).getTitulo(), pData.get(position).getDescripcion(), pData.get(position).getProtagonista(), pData.get(position).getGenero(),
-                            pData.get(position).getDirector(), pData.get(position).getPlataforma(), position);
+                            pData.get(position).getDirector(), pData.get(position).getPlataforma(), pData.get(position).getFechaPublicacion(), position);
                 }
             }
         });
@@ -125,7 +126,7 @@ public class AdaptadorCompartir extends RecyclerView.Adapter<AdaptadorCompartir.
     }
 
     public interface OnShareClickListener {
-        void onShareClick(Bitmap bitmap, String title, String description, String actor, String genero, String director, String plataforma, int adapterPosition);
+        void onShareClick(Bitmap bitmap, String title, String description, String actor, String genero, String director, String plataforma, Date fechapublicacion, int adapterPosition);
     }
 
 

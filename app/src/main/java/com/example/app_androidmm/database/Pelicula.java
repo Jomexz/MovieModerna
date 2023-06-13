@@ -5,7 +5,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 
-import static com.example.app_androidmm.utilidades.Utilidades.dateToLocalDate;
+import static com.example.app_androidmm.utilidades.Utilidades.datesqlToLocalDate;
 
 public class Pelicula {
     private static Pelicula instanciaPelicula;
@@ -183,7 +183,7 @@ public class Pelicula {
 
         // Cálculo de similitud adicional para los demás campos
         double similitudRating = calcularSimilitudRating(otraPelicula.getRating());
-        double similitudFechaPublicacion = calcularSimilitudFechaPublicacion(dateToLocalDate(otraPelicula.getFechaPublicacion()));
+        double similitudFechaPublicacion = calcularSimilitudFechaPublicacion(datesqlToLocalDate(otraPelicula.getFechaPublicacion()));
         double similitudDirector = calcularSimilitudTexto(director, otraPelicula.getDirector());
         double similitudProtagonista = calcularSimilitudTexto(protagonista, otraPelicula.getProtagonista());
 
@@ -253,7 +253,7 @@ public class Pelicula {
     private double calcularSimilitudRating(double otroRating) {
         // Implementación básica utilizando la diferencia absoluta entre los ratings
         double diferencia = Math.abs(rating - otroRating);
-        double similitud = 1.0 - diferencia / 10.0; // Se asume una escala de rating de 0 a 10
+        double similitud = 1.0 - diferencia / 10.0; // Escala de rating de 0 a 10
 
         return similitud;
     }
@@ -262,7 +262,7 @@ public class Pelicula {
     private double calcularSimilitudFechaPublicacion(LocalDate otraFechaPublicacion) {
         // Implementación básica utilizando la diferencia en años entre las fechas de publicación
         int diferencia = Math.abs(fechaPublicacion.getYear() - otraFechaPublicacion.getYear());
-        double similitud = 1.0 - diferencia / 10.0; // Se asume un rango de 10 años
+        double similitud = 1.0 - diferencia / 10.0; // Rango de 10 años
 
         return similitud;
     }
@@ -300,7 +300,7 @@ public class Pelicula {
     // Método para obtener el índice de una palabra en el vocabulario
     private int obtenerIndicePalabra(String palabra) {
         // Implementación básica utilizando una lista de palabras predefinida
-        String[] vocabulario = {"género", "rating", "fecha", "director", "protagonista"};
+        String[] vocabulario = {"genero", "rating", "fecha", "director", "protagonista"};
 
         for (int i = 0; i < vocabulario.length; i++) {
             if (vocabulario[i].equals(palabra)) {
