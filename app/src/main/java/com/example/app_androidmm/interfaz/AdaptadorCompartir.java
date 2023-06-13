@@ -31,8 +31,8 @@ import static com.example.app_androidmm.utilidades.Utilidades.loadImageFromUrl;
 public class AdaptadorCompartir extends RecyclerView.Adapter<AdaptadorCompartir.ViewHolder> {
     public static final int PERMISSION_REQUEST_EXTERNAL_STORAGE = 1;
     private List<Pelicula> pData;
-    private Context context;
-    private Activity activity;
+    private final Context context;
+    private final Activity activity;
     private OnShareClickListener onShareClickListener;
 
     public AdaptadorCompartir(List<Pelicula> pData, Context context, Activity activity) {
@@ -113,15 +113,15 @@ public class AdaptadorCompartir extends RecyclerView.Adapter<AdaptadorCompartir.
         void bindData(final Pelicula item) {
             loadImageFromUrl(item.getImagen(), poster);
             titulo.setText(item.getTitulo());
-            descripcion.setText(Html.fromHtml("<b>Descripción: </b>").toString()  + item.getDescripcion());
-            actor.setText(Html.fromHtml("<b>Actor principal: </b>").toString()  + item.getProtagonista());
-            genero.setText(Html.fromHtml("<b>Género: </b>".toString() + item.getGenero()));
-            calificacionEdad.setText(Html.fromHtml("<b>Calificación de edad: </b>").toString()  + item.getCalificacion());
-            director.setText(Html.fromHtml("<b>Director: </b>").toString()  + item.getDirector());
+            descripcion.setText(Html.fromHtml("<b>Descripción: </b>" + item.getDescripcion()));
+            actor.setText(Html.fromHtml("<b>Actor principal: </b>" + item.getProtagonista()));
+            genero.setText(Html.fromHtml("<b>Género: </b>" + item.getGenero()));
+            calificacionEdad.setText(Html.fromHtml("<b>Calificación de edad: </b>" + item.getCalificacion()));
+            director.setText(Html.fromHtml("<b>Director: </b>" + item.getDirector()));
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             String releaseDate = dateFormat.format(item.getFechaPublicacion());
-            fecha.setText(Html.fromHtml("<b>Fecha de estreno: </b>").toString() + releaseDate);
-            plataforma.setText(Html.fromHtml("<b>Plataforma de Streaming: </b>").toString() + item.getPlataforma());
+            fecha.setText(Html.fromHtml("<b>Fecha de estreno: </b>" + releaseDate));
+            plataforma.setText(Html.fromHtml("<b>Plataforma de Streaming: </b>" + item.getPlataforma()));
         }
     }
 

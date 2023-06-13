@@ -171,7 +171,7 @@ public class ControlRecomendar extends AppCompatActivity {
                                     p.setFechaPublicacion(resultSet.getDate("fechapublicacion"));
                                     p.setProtagonista(resultSet.getString("protagonista"));
                                     p.setPlataforma(resultSet.getString("plataforma"));
-                                    Log.d(TAG, p.toString());
+//                                    Log.d(TAG, p.toString());
                                     listaPeliculas.add(p);
                                     resultados = true;
                                 }
