@@ -65,16 +65,16 @@ public class AdaptadorCompartir extends RecyclerView.Adapter<AdaptadorCompartir.
         holder.bindData(pData.get(position));
         holder.shareButton.setOnClickListener(view -> {
             if (onShareClickListener != null) {
-                if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        == PackageManager.PERMISSION_DENIED) {
-                    ActivityCompat.requestPermissions(activity,
-                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                            PERMISSION_REQUEST_EXTERNAL_STORAGE);
-                } else {
+//                if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//                        == PackageManager.PERMISSION_DENIED) {
+//                    ActivityCompat.requestPermissions(activity,
+//                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+//                            PERMISSION_REQUEST_EXTERNAL_STORAGE);
+//                } else {
                     onShareClickListener.onShareClick(((BitmapDrawable) holder.poster.getDrawable()).getBitmap(),
                             pData.get(position).getTitulo(), pData.get(position).getDescripcion(), pData.get(position).getProtagonista(), pData.get(position).getGenero(),
                             pData.get(position).getDirector(), pData.get(position).getPlataforma(), pData.get(position).getFechaPublicacion(), position);
-                }
+//                }
             }
         });
     }

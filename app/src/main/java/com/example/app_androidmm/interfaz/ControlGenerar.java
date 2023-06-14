@@ -193,29 +193,31 @@ public class ControlGenerar extends AppCompatActivity {
                                 recyclerView.setHasFixedSize(true);
                                 recyclerView.setLayoutManager(new LinearLayoutManager(ControlGenerar.this));
                             }
-                            if(finalResultados) {
+                            if (finalResultados) {
                                 adaptadorCompartir = new AdaptadorCompartir(mejoresRecomendaciones, ControlGenerar.this, ControlGenerar.this);
-                                recyclerView.setAdapter(adaptadorCompartir);
+                                recyclerView.setHasFixedSize(true);
+                                recyclerView.setLayoutManager(new LinearLayoutManager(ControlGenerar.this));
+
                                 adaptadorCompartir.setOnShareClickListener((bitmap, title, description, actor, genero, director, plataforma, fechapublicacion, adapterPosition) -> {
                                     // Obtener la película correspondiente a la posición en el adaptador
-                                    Pelicula pelicula = adaptadorCompartir.getPeliculaAtPosition(adapterPosition);
+                                    pelicula = peliculas.get(adapterPosition);
                                     String imageUrl = pelicula.getImagen();
-                                    if (ContextCompat.checkSelfPermission(ControlGenerar.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                            != PackageManager.PERMISSION_GRANTED) {
-                                        // Solicitar el permiso de almacenamiento
-                                        ActivityCompat.requestPermissions(ControlGenerar.this,
-                                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                                PERMISSION_REQUEST_EXTERNAL_STORAGE);
-                                    } else {
-                                        // El permiso de almacenamiento ya está concedido, descargar y compartir la imagen
-                                        runOnUiThread(() -> {
-                                            descargarYCompartirImagen(TAG,ControlGenerar.this, imageUrl, title, description, actor, genero, director, plataforma, fechapublicacion);
 
-                                        });
-                                    }
+                                    // El permiso de almacenamiento ya está concedido, descargar y compartir la imagen
+                                    runOnUiThread(() -> {
+                                        descargarYCompartirImagen(TAG, ControlGenerar.this, imageUrl, title, description, actor, genero, director, plataforma, fechapublicacion);
+//                                                    compartirPrueba(ControlRecomendar.this,title,description,actor,genero,director,plataforma);
+                                    });
+
+
+
                                 });
+                                recyclerView.setAdapter(adaptadorCompartir);
+                            } else {
+                                Toast.makeText(ControlGenerar.this, "No se encontraron películas.", Toast.LENGTH_SHORT).show();
                             }
                         });
+
                     } catch (SQLException e) {
                         Log.e(TAG,"Error al obtener películas: " + e.getMessage());
                         throw new RuntimeException(e);
@@ -249,14 +251,14 @@ public class ControlGenerar extends AppCompatActivity {
                     String director = pelicula.getDirector();
                     String plataforma = pelicula.getPlataforma();
                     Date fecha = pelicula.getFechaPublicacion();
+                    System.out.println("Pelicula a compartir: " + pelicula);
                     runOnUiThread(() -> {
-                        descargarYCompartirImagen(TAG,this, imageUrl, title, description, actor, genero, director, plataforma, fecha);
-
+                        descargarYCompartirImagen(TAG, this, imageUrl, title, description, actor, genero, director, plataforma, fecha);
                     });
                 }
             } else {
                 // Permiso de almacenamiento externo denegado, muestra un mensaje al usuario
-                Toast.makeText(ControlGenerar.this, "Permiso de almacenamiento denegado", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Permiso de almacenamiento denegado", Toast.LENGTH_SHORT).show();
             }
         }
     }

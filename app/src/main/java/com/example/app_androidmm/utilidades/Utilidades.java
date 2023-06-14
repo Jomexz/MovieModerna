@@ -17,6 +17,7 @@ import android.util.Log;
 import android.widget.*;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.app_androidmm.database.Usuario;
@@ -37,13 +38,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static androidx.core.content.ContextCompat.startActivity;
@@ -121,7 +120,8 @@ public class Utilidades {
         buscador += " trailer español " + anio;
         Log.d(TAG, buscador);
         // Agregar los datos a compartir
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "Título: " + title +
+        shareIntent.putExtra(Intent.EXTRA_TEXT, "¡Hey! Te recomiendo ver esta película:" +
+                "\nTítulo: " + title +
                 "\nDescripción: " + description +
                 "\nActor principal: " + actor +
                 "\nGénero: " + genero +
@@ -129,7 +129,8 @@ public class Utilidades {
                 "\nPlataforma de Streaming: " + plataforma +
                 "\nAño de estreno: " + anio +
                 "\nTrailer: " + getTrailer(buscador) +
-                "\nURL de la imagen: " + imageUrl);
+                "\nURL de la imagen: " + imageUrl +
+                "\nPuedes visitar MovieModerna si quieres encontrar información acerca de esta y más películas ;) [link]");
 
         try {
             // Iniciar la actividad de compartir
@@ -185,13 +186,15 @@ public class Utilidades {
             buscador+=" trailer español" + anio;
             Log.d(TAG, buscador);
             // Agregar los datos a compartir
-            shareIntent.putExtra(Intent.EXTRA_TEXT, "Título: " + title +
+            shareIntent.putExtra(Intent.EXTRA_TEXT, "¡Hey! Te recomiendo ver esta película:" +
+                    "\nTítulo:" + title +
                     "\nDescripción: " + description +
                     "\nActor principal: " + actor +
                     "\nGénero: " + genero +
                     "\nDirector: " + director +
                     "\nPlataforma de Streaming: " + plataforma +
-                    "\nTrailer: " + getTrailer(buscador));
+                    "\nTrailer: " + getTrailer(buscador) +
+                    "\nPuedes visitar MovieModerna si quieres encontrar información acerca de esta y más películas ;) [link]");
             shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
 
             try {
@@ -434,50 +437,67 @@ public class Utilidades {
         activity.startActivityForResult(chooserIntent, requestCode);
     }
 
+    // Variable miembro para almacenar la URI de la imagen capturada por la cámara
+    public static Uri photoUri;
 
+    // Método para elegir cómo subir tu foto de perfil
     public static void showImagePickerDialog(Context context, Activity activity) {
-        final CharSequence[] options = {"Galería", "Fotos", "Cámara", "Archivos"};
+        // Verificar permisos de la cámara
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA}, REQUEST_IMAGE_CAMERA);
+            return;
+        }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Seleccionar imagen desde")
-                .setItems(options, (dialog, which) -> {
-                    if (which == 0) {
-                        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_IMAGE_GALLERY);
-                        } else {
-                            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                            activity.startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
-                        }
-                    } else if (which == 1) {
-                        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        activity.startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
-                    } else if (which == 2) {
-                        if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA}, REQUEST_IMAGE_CAMERA);
-                        } else {
-                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            activity.startActivityForResult(intent, REQUEST_IMAGE_CAMERA);
-                        }
-                    } else if (which == 3) {
-                        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_IMAGE_FILES);
-                        } else {
-                            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                            intent.setType("image/*");
-                            activity.startActivityForResult(intent, REQUEST_IMAGE_FILES);
-                        }
-                    }
-                })
-                .show();
+        // Intent para capturar la imagen desde la cámara
+        Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        File photoFile = null;
+        try {
+            photoFile = createImageFile(context);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        if (photoFile != null) {
+            photoUri = FileProvider.getUriForFile(context, "com.example.app.fileprovider", photoFile);
+            takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+        }
+
+        // Intent para seleccionar una imagen de la galería
+        Intent pickPhotoIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        pickPhotoIntent.setType("image/*");
+
+        // Crear el intent de elección para la cámara
+        Intent cameraChooserIntent = Intent.createChooser(takePhotoIntent, "Tomar foto");
+
+        // Agregar el intent de la galería al intent de elección
+        cameraChooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickPhotoIntent});
+
+        // Iniciar la actividad con el intent de elección
+        activity.startActivityForResult(cameraChooserIntent, REQUEST_IMAGE_GALLERY);
     }
+
+
+
+    public static File createImageFile(Context context) throws IOException {
+        // Crear un archivo con nombre único para guardar la imagen capturada
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String imageFileName = "IMG_" + timeStamp + "_";
+        File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        return File.createTempFile(imageFileName, ".jpg", storageDir);
+    }
+
+
 
     public static void mostrarImagenSeleccionada(Context context, Uri uri, ImageView imgavatar) {
         try {
             // Obtener el Bitmap de la imagen seleccionada
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
 
-            // Redimensionar el Bitmap si es necesario
-            Bitmap resizedBitmap = redimensionarBitmap(bitmap, 500, 500);
+            // Calcular las dimensiones del ImageView
+            int targetWidth = imgavatar.getWidth();
+            int targetHeight = imgavatar.getHeight();
+
+            // Redimensionar el Bitmap para ajustarlo al tamaño del ImageView sin cambiar su resolución
+            Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, true);
 
             // Mostrar el Bitmap en el ImageView
             imgavatar.setImageBitmap(resizedBitmap);
@@ -485,6 +505,7 @@ public class Utilidades {
             e.printStackTrace();
         }
     }
+
 
     public static Bitmap redimensionarBitmap(Bitmap bitmap, int nuevoAncho, int nuevoAlto) {
         int ancho = bitmap.getWidth();

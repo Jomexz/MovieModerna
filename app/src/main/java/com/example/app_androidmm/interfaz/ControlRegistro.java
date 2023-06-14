@@ -43,12 +43,10 @@ import java.util.HashMap;
 import java.util.Locale;
 
 
-
-
 import static com.example.app_androidmm.utilidades.Utilidades.*;
 
 
-public class ControlRegistro extends AppCompatActivity{
+public class ControlRegistro extends AppCompatActivity {
     private static final int REQUEST_CODE_SELECT_IMAGE = 1;
 
     private static String TAG = "RegistroControl";
@@ -62,12 +60,14 @@ public class ControlRegistro extends AppCompatActivity{
     private TextView textViewFecha;
     private Calendar calendar;
     private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-    private HashMap <String, String> datosUser = new HashMap<>();
+    private HashMap<String, String> datosUser = new HashMap<>();
     private ActivityResultLauncher<Intent> imagePickerLauncher;
     private String urlImagen = "https://firebasestorage.googleapis.com/v0/b/moviemoderna.appspot.com/o/avatar%2Fuser.jpg?alt=media&token=8191eb8a-a28d-45b7-80b2-20a859d7dcc8";
     private Usuario user = Usuario.getInstance();
+    private Uri imageUri;
 
     private ConnectionManager connectionManager = new ConnectionManager();
+
     @SuppressLint("WrongThread")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,13 +75,13 @@ public class ControlRegistro extends AppCompatActivity{
         setContentView(R.layout.pagina_registro);
         // Definir atributos
         imgavatar = findViewById(R.id.imgAvatarC);
-        loadImageFromUrl(urlImagen,imgavatar);
+        loadImageFromUrl(urlImagen, imgavatar);
         user.setAvatar(urlImagen);
         // Cambiar foto con formato correcto
         btnCambiarFoto = findViewById(R.id.btnCambiarAvatar);
         btnCambiarFoto.setOnClickListener(view -> {
             // Lanzar el selector de imágenes
-            showImagePickerDialog(this,this);
+            showImagePickerDialog(this, this);
         });
         // Seleccionar fecha de nacimiento
         imageButton = findViewById(R.id.imageButton);
@@ -113,12 +113,12 @@ public class ControlRegistro extends AppCompatActivity{
             if (alias.isEmpty() || pass.isEmpty() || nombre.isEmpty()
                     || apellidos == null || email.isEmpty() || dtFechaNac[0] == null || respuesta.isEmpty()) {
                 System.out.println("Algún campo vacío");
-                mostrarErrorCampo(ControlRegistro.this, "Algún campo vacío","Error en la introducción de datos");
+                mostrarErrorCampo(ControlRegistro.this, "Algún campo vacío", "Error en la introducción de datos");
             } else if (!pass.equals(passConfirm)) {
-                mostrarErrorCampo(ControlRegistro.this, "Las contraseñas no coinciden.","Error en la introducción de datos");
+                mostrarErrorCampo(ControlRegistro.this, "Las contraseñas no coinciden.", "Error en la introducción de datos");
             } else if (pass.equals(passConfirm)) {
                 if (apellidos == null) {
-                    mostrarErrorCampo(ControlRegistro.this, "Apellidos vacios","Error en la introducción de datos");
+                    mostrarErrorCampo(ControlRegistro.this, "Apellidos vacios", "Error en la introducción de datos");
                 } else {
                     datosUser.put("alias", alias);
                     datosUser.put("pass", pass);
@@ -147,30 +147,36 @@ public class ControlRegistro extends AppCompatActivity{
                             String query = "INSERT INTO usuario (alias, contrasena, nombre, apellidos, fechanace, email, avatar, pregunta, respuesta) VALUES ('" +
                                     alias + "','" + user.getPass() + "','" + nombre + "','" + apellidos + "','" + finalFecha + "','" + email + "','" + user.getAvatar() + "','" + pregunta + "','" + respuesta + "')";
                             connectionManager.executeQuery(query, new ConnectionManager.QueryCallback() {
-                                        @Override
-                                        public void onQueryCompleted(ResultSet resultSet, int rowsAffected) {
-                                            try {
-                                                if (resultSet != null) {
-                                                    // Procesar los resultados de la consulta
-                                                    while (resultSet.next()) {
-                                                        String alias = resultSet.getString("alias");
-                                                        String contrasena = resultSet.getString("contrasena");
+                                @Override
+                                public void onQueryCompleted(ResultSet resultSet, int rowsAffected) {
+                                    try {
+                                        if (resultSet != null) {
+                                            // Procesar los resultados de la consulta
+                                            while (resultSet.next()) {
+                                                String alias = resultSet.getString("alias");
+                                                String contrasena = resultSet.getString("contrasena");
 
-                                                        // Realizar cualquier acción con los datos obtenidos
-                                                        Log.d(TAG, "Usuario: " + alias + ", Pass: " + contrasena);
-                                                    }
-                                                } else {
-                                                    // Manejar casos de inserción o actualización (rowsAffected contiene el número de filas afectadas)
-                                                    Log.d(TAG, "Filas afectadas: " + rowsAffected);
-                                                    mostrarErrorCampo(ControlRegistro.this,"La cuenta se ha creado con éxito","Creación de cuenta");
-                                                    Intent intent = new Intent(ControlRegistro.this, ControlBienvenido.class);
-                                                    startActivity(intent);
-                                                }
-                                            } catch (SQLException e) {
-                                                Log.e(TAG, "Error al procesar los resultados: " + e.getMessage());
+                                                // Realizar cualquier acción con los datos obtenidos
+                                                Log.d(TAG, "Usuario: " + alias + ", Pass: " + contrasena);
                                             }
+                                        } else {
+                                            // Manejar casos de inserción o actualización (rowsAffected contiene el número de filas afectadas)
+                                            Log.d(TAG, "Filas afectadas: " + rowsAffected);
+                                            if (imageUri != null) {
+                                                uploadImageToFirebase(imageUri, user, TAG);
+                                            } else if (photoUri != null) {
+                                                uploadImageToFirebase(photoUri, user, TAG);
+                                            }
+                                            mostrarErrorCampo(ControlRegistro.this, "La cuenta se ha creado con éxito", "Creación de cuenta");
+                                            Intent intent = new Intent(ControlRegistro.this, ControlBienvenido.class);
+                                            startActivity(intent);
                                         }
-                                        @Override
+                                    } catch (SQLException e) {
+                                        Log.e(TAG, "Error al procesar los resultados: " + e.getMessage());
+                                    }
+                                }
+
+                                @Override
                                 public void onQueryFailed(String error) {
                                     // Manejar el error de la consulta
                                     Log.e(TAG, error);
@@ -230,13 +236,17 @@ public class ControlRegistro extends AppCompatActivity{
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == REQUEST_IMAGE_GALLERY || requestCode == REQUEST_IMAGE_CAMERA || requestCode == REQUEST_IMAGE_FILES) {
                 if (data != null && data.getData() != null) {
-                    Uri imageUri = data.getData();
-                    imgavatar.setImageURI(imageUri);
-                    uploadImageToFirebase(imageUri, user, TAG);
+                    imageUri = data.getData();
+//                    imgavatar.setImageURI(imageUri);
+                    mostrarImagenSeleccionada(this,imageUri,imgavatar);
+                } else if (photoUri != null) {
+//                    imgavatar.setImageURI(photoUri);
+                    mostrarImagenSeleccionada(this,photoUri,imgavatar);
                 }
             }
         }
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -266,7 +276,6 @@ public class ControlRegistro extends AppCompatActivity{
             }
         }
     }
-
 
 
 }

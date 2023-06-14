@@ -21,6 +21,15 @@
             android:theme="@style/Theme.App_AndroidMM"
             tools:targetApi="31"
             android:enableOnBackInvokedCallback="true">
+        <provider
+                android:name="androidx.core.content.FileProvider"
+                android:authorities="com.example.app.fileprovider"
+                android:exported="false"
+                android:grantUriPermissions="true">
+            <meta-data
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/file_paths" />
+        </provider>
         <activity
                 android:name=".interfaz.MainActivity"
                 android:exported="true">

@@ -1,6 +1,7 @@
 package com.example.app_androidmm.interfaz;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -39,7 +40,7 @@ public class ControlConfig extends AppCompatActivity {
     private String alias, nombre, apellidos, pass, newPass;
     private ConnectionManager connectionManager = new ConnectionManager();
     private Usuario user = Usuario.getInstance();
-
+    private Uri imageUri;
     @SuppressLint("WrongThread")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +71,7 @@ public class ControlConfig extends AppCompatActivity {
         btnAvatar = findViewById(R.id.changeAvatarButton);
         btnConfigurar = findViewById(R.id.guardarCambiosButton);
 //        bytesToImageView(user.getAvatar(),imgAvatarConfig);
-        btnAvatar.setOnClickListener(view -> seleccionarImagen(ControlConfig.this, REQUEST_CODE_SELECT_IMAGE));
+        btnAvatar.setOnClickListener(view -> showImagePickerDialog(this,this));
 
         btnConfigurar.setOnClickListener(view -> {
             alias = txtAliasConfig.getText().toString();
@@ -131,6 +132,11 @@ public class ControlConfig extends AppCompatActivity {
                             } else {
                                 // Manejar casos de inserción o actualización (rowsAffected contiene el número de filas afectadas)
                                 Log.d(TAG, "Filas afectadas: " + rowsAffected);
+                                if (imageUri != null) {
+                                    uploadImageToFirebase(imageUri, user, TAG);
+                                } else if (photoUri != null) {
+                                    uploadImageToFirebase(photoUri, user, TAG);
+                                }
                                 mostrarErrorCampo(ControlConfig.this, "La cuenta se ha actualizado con éxito", "Configuración de cuenta");
                                 Intent intent = new Intent(ControlConfig.this, ControlBienvenido.class);
                                 startActivity(intent);
@@ -194,31 +200,18 @@ public class ControlConfig extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_OK) {
-            if (requestCode == REQUEST_CODE_SELECT_IMAGE) {
-                if (data != null) {
-                    Uri selectedImageUri = data.getData();
-                    if (selectedImageUri != null) {
-                        mostrarImagenSeleccionada(ControlConfig.this, selectedImageUri, imgAvatarConfig);
-                    } else {
-                        // Manejar el caso en el que la URI sea nula
-                        Toast.makeText(ControlConfig.this, "No se pudo obtener la imagen seleccionada", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            } else if (requestCode == REQUEST_IMAGE_CAMERA) {
-                // Obtener la URI de la imagen capturada desde el archivo de preferencias compartidas
-                SharedPreferences sharedPreferences = getSharedPreferences("captured_image", Context.MODE_PRIVATE);
-                String capturedImageUriString = sharedPreferences.getString("captured_image_uri", null);
-
-                if (capturedImageUriString != null) {
-                    Uri capturedImageUri = Uri.parse(capturedImageUriString);
-                    mostrarImagenSeleccionada(ControlConfig.this, capturedImageUri, imgAvatarConfig);
-                } else {
-                    // Manejar el caso en el que la URI de la imagen capturada sea nula
-                    Toast.makeText(ControlConfig.this, "No se pudo obtener la imagen capturada", Toast.LENGTH_SHORT).show();
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == REQUEST_IMAGE_GALLERY || requestCode == REQUEST_IMAGE_CAMERA || requestCode == REQUEST_IMAGE_FILES) {
+                if (data != null && data.getData() != null) {
+                    imageUri = data.getData();
+//                    imgavatar.setImageURI(imageUri);
+                    mostrarImagenSeleccionada(this,imageUri,imgAvatarConfig);
+                } else if (photoUri != null) {
+//                    imgavatar.setImageURI(photoUri);
+                    mostrarImagenSeleccionada(this,photoUri,imgAvatarConfig);
                 }
             }
         }

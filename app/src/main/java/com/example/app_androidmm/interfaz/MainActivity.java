@@ -122,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
                                     Toast.makeText(MainActivity.this,"PERMISO DE LECTURA DENEGADO", Toast.LENGTH_SHORT);
                                     System.out.println("PERMISO DE LECTURA DENEGADO");
                                 }
+
                                 System.out.println("Se ha iniciado sesión");
                                 redirectActivity(MainActivity.this, ControlBienvenido.class);
                                 finish();
@@ -163,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == PERMISSION_REQUEST_INTERNET) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permiso concedido
-                Toast.makeText(MainActivity.this, "Permiso de acceso a Internet concedido", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this, "Permiso de acceso a Internet concedido", Toast.LENGTH_SHORT).show();
                 System.out.println("Permiso de acceso a Internet concedido");
             } else {
                 // Permiso denegado
@@ -171,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("Permiso de acceso a Internet denegado");
             }
         }
+
     }
 
 }
