@@ -9,12 +9,13 @@
         android:layout_margin="8dp"
         android:orientation="vertical"
         android:layout_marginTop="16dp"
+
         app:cardCornerRadius="25dp">
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="#DDB3FF">
+            android:background="@drawable/background_movie">
 
         <TextView
                 android:id="@+id/titleTextView"
