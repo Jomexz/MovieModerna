@@ -34,9 +34,8 @@
                 android:id="@+id/btnCambiarAvatar"
                 android:layout_width="120dp"
                 android:layout_height="37dp"
-                android:background="@drawable/button_background"
                 android:text="Cambiar avatar"
-                android:textColor="#FFFFFF"
+                style="@style/ButtonStyle"
                 android:textSize="12sp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp" />
@@ -50,7 +49,7 @@
                 android:layout_marginTop="16dp"
                 android:background="@drawable/textview_background"
                 android:hint="Nombre de usuario"
-                android:textColorHint="@color/black"
+                android:textColorHint="@color/pressed_color"
                 android:textColor="@color/black"
                 android:gravity="center_vertical"
                 android:layout_gravity="center_horizontal"
@@ -65,7 +64,7 @@
                 android:layout_marginTop="16dp"
                 android:background="@drawable/textview_background"
                 android:hint="Correo electrónico"
-                android:textColorHint="@color/black"
+                android:textColorHint="@color/pressed_color"
                 android:textColor="@color/black"
                 android:layout_gravity="center_horizontal"
                 android:textSize="14sp" />
@@ -79,7 +78,7 @@
                 android:layout_marginTop="16dp"
                 android:background="@drawable/textview_background"
                 android:hint="Contraseña"
-                android:textColorHint="@color/black"
+                android:textColorHint="@color/pressed_color"
                 android:textColor="@color/black"
                 android:layout_gravity="center_horizontal"
                 android:textSize="14sp" />
@@ -93,7 +92,7 @@
                 android:layout_marginTop="16dp"
                 android:background="@drawable/textview_background"
                 android:hint="Repite contraseña"
-                android:textColorHint="@color/black"
+                android:textColorHint="@color/pressed_color"
                 android:textColor="@color/black"
                 android:layout_gravity="center_horizontal"
                 android:textSize="14sp" />
@@ -107,7 +106,7 @@
                 android:layout_marginTop="16dp"
                 android:background="@drawable/textview_background"
                 android:hint="Nombre"
-                android:textColorHint="@color/black"
+                android:textColorHint="@color/pressed_color"
                 android:textColor="@color/black"
                 android:layout_gravity="center_horizontal"
                 android:textSize="14sp" />
@@ -121,7 +120,7 @@
                 android:layout_marginTop="16dp"
                 android:background="@drawable/textview_background"
                 android:hint="Apellidos"
-                android:textColorHint="@color/black"
+                android:textColorHint="@color/pressed_color"
                 android:textColor="@color/black"
                 android:layout_gravity="center_horizontal"
                 android:textSize="14sp" />
@@ -144,7 +143,7 @@
                         android:layout_alignParentStart="true"
                         android:layout_centerVertical="true"
                         android:text="Fecha de nacimiento:"
-                        android:textColor="@color/black"
+                        android:textColor="@color/pressed_color"
                         android:textSize="14sp"
                         android:layout_marginStart="0dp"
                         android:layout_marginTop="15dp"/>
@@ -167,6 +166,7 @@
 
         <Spinner
                 android:id="@+id/cbPreguntas"
+
                 android:layout_width="230dp"
                 android:layout_height="35dp"
                 android:layout_below="@id/viewFecha"
@@ -175,7 +175,8 @@
                 android:entries="@array/preguntas"
                 android:background="@drawable/spinner_background"
                 android:layout_gravity="center_horizontal"
-                android:popupBackground="@drawable/spinner_popup_background" />
+                android:textColor="@color/black"
+        />
 
 
         <EditText
@@ -187,7 +188,7 @@
                 android:layout_marginTop="16dp"
                 android:background="@drawable/textview_background"
                 android:hint="Respuesta de seguridad"
-                android:textColorHint="@color/black"
+                android:textColorHint="@color/pressed_color"
                 android:textColor="@color/black"
                 android:layout_gravity="center_horizontal"
                 android:textSize="14sp" />
@@ -199,9 +200,8 @@
                 android:layout_below="@id/txtRespuesta"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/button_background"
+                style="@style/ButtonStyle"
                 android:text="REGISTRARSE"
-                android:textColor="#FFFFFF"
                 android:layout_gravity="center_horizontal"
                 android:textSize="24sp"/>
         <DatePicker

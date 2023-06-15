@@ -8,7 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="navigationColor">#FF5B1E97</color>
-    <color name="pressed_color">#c0c0c0</color>
+    <color name="pressed_color">#FF595858</color>
     <color name="default_color">#FFFFFF</color>
     <color name="disabled_color">#ed1c24</color>
 </resources>

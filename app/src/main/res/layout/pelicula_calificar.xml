@@ -147,8 +147,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="CALIFICAR"
-                android:textColor="#FFFFFF"
-                android:background="@drawable/button_background"
+                style="@style/ButtonStyle"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"/>

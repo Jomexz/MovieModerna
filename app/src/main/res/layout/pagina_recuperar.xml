@@ -6,7 +6,7 @@
             android:background="@drawable/background_bkg">
     <RelativeLayout
             android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+            android:layout_height="match_parent">
 
         <ImageView
                 android:id="@+id/imgAppIcon"
@@ -32,9 +32,8 @@
                 android:layout_height="36dp"
                 android:layout_below="@id/tvTitle"
                 android:layout_marginTop="20dp"
-                android:background="@drawable/spinner_background"
-                android:popupBackground="@drawable/spinner_popup_background"
-                android:spinnerMode="dropdown"/>
+                android:spinnerMode="dropdown"
+        style="@style/SpinnerDropdownStyle"/>
 
         <EditText
                 android:id="@+id/txtRespuesta"
@@ -44,7 +43,8 @@
                 android:layout_marginTop="20dp"
                 android:background="@drawable/textview_background"
                 android:hint="Respuesta"
-                android:textColor="#000000"/>
+                android:textColorHint="@color/pressed_color"
+                android:textColor="@color/black"/>
         <Button
                 android:id="@+id/btnValidar"
                 android:layout_width="140dp"
@@ -52,9 +52,8 @@
                 android:layout_below="@id/txtRespuesta"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="50dp"
-                android:background="@drawable/button_background"
-                android:text="VALIDAR RESPUESTA"
-                android:textColor="#FFFFFF"/>
+                style="@style/ButtonStyle"
+                android:text="VALIDAR RESPUESTA"/>
 
         <EditText
                 android:id="@+id/txtNewPass"
@@ -67,6 +66,8 @@
                 android:background="@drawable/textview_background"
                 android:hint="Nueva contraseña"
                 android:inputType="textPassword"
+                android:textColorHint="@color/pressed_color"
+                android:enabled="false"
                 android:textColor="#000000"/>
 
         <EditText
@@ -80,18 +81,19 @@
                 android:layout_marginRight="42dp"
                 android:background="@drawable/textview_background"
                 android:hint="Repita nueva contraseña"
+                android:textColorHint="@color/pressed_color"
                 android:inputType="textPassword"
-                android:textColor="#000000"/>
+                android:textColor="#000000"
+                android:enabled="false"/>
         <Button
                 android:id="@+id/btnCambiar"
-                android:layout_width="163dp"
+                android:layout_width="140dp"
                 android:layout_height="35dp"
                 android:layout_below="@id/txtNewPassRepit"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
-                android:background="@drawable/button_background"
                 android:text="CAMBIAR CONTRASEÑA"
-                android:textColor="#FFFFFF"
+                style="@style/ButtonStyle"
                 android:enabled="false"/>
     </RelativeLayout>
 </ScrollView>

@@ -66,8 +66,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_centerHorizontal="true"
                 android:text="ENTRAR"
-                android:textColor="#FFFFFF"
-                android:background="@drawable/button_background"
+                style="@style/ButtonStyle"
                 android:layout_marginTop="24dp"/>
 
         <Button
@@ -78,8 +77,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_centerHorizontal="true"
                 android:text="REGISTRARSE"
-                android:textColor="#FFFFFF"
-                android:background="@drawable/button_background"
+                style="@style/ButtonStyle"
                 android:layout_marginTop="16dp"/>
 
     </RelativeLayout>
