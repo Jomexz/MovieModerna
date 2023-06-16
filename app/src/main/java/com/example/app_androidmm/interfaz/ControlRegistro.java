@@ -44,10 +44,10 @@ import java.util.Locale;
 
 
 import static com.example.app_androidmm.utilidades.Utilidades.*;
+import static java.lang.String.join;
 
 
 public class ControlRegistro extends AppCompatActivity {
-    private static final int REQUEST_CODE_SELECT_IMAGE = 1;
 
     private static String TAG = "RegistroControl";
     private String alias, nombre, apellidos, pass, passConfirm, email, pregunta, respuesta;
@@ -65,7 +65,6 @@ public class ControlRegistro extends AppCompatActivity {
     private String urlImagen = "https://firebasestorage.googleapis.com/v0/b/moviemoderna.appspot.com/o/avatar%2Fuser.jpg?alt=media&token=8191eb8a-a28d-45b7-80b2-20a859d7dcc8";
     private Usuario user = Usuario.getInstance();
     private Uri imageUri;
-
     private ConnectionManager connectionManager = new ConnectionManager();
 
     @SuppressLint("WrongThread")
@@ -76,7 +75,9 @@ public class ControlRegistro extends AppCompatActivity {
         // Definir atributos
         imgavatar = findViewById(R.id.imgAvatarC);
         loadImageFromUrl(urlImagen, imgavatar);
-        user.setAvatar(urlImagen);
+
+        user.setAvatar(urlImagen); // Restablecer la URL por defecto mientras se sube la imagen
+
         // Cambiar foto con formato correcto
         btnCambiarFoto = findViewById(R.id.btnCambiarAvatar);
         btnCambiarFoto.setOnClickListener(view -> {
@@ -161,15 +162,12 @@ public class ControlRegistro extends AppCompatActivity {
                                             }
                                         } else {
                                             // Manejar casos de inserción o actualización (rowsAffected contiene el número de filas afectadas)
-                                            Log.d(TAG, "Filas afectadas: " + rowsAffected);
-                                            if (imageUri != null) {
-                                                uploadImageToFirebase(imageUri, user, TAG);
-                                            } else if (photoUri != null) {
-                                                uploadImageToFirebase(photoUri, user, TAG);
-                                            }
+                                            Log.d(TAG, "Usuario: " + user.toString());
+                                            Log.d("LATER QUERY", photoUri.toString());
                                             mostrarErrorCampo(ControlRegistro.this, "La cuenta se ha creado con éxito", "Creación de cuenta");
                                             Intent intent = new Intent(ControlRegistro.this, ControlBienvenido.class);
                                             startActivity(intent);
+                                            photoUri = null;
                                         }
                                     } catch (SQLException e) {
                                         Log.e(TAG, "Error al procesar los resultados: " + e.getMessage());
@@ -190,62 +188,30 @@ public class ControlRegistro extends AppCompatActivity {
         });
     }
 
-    /*public void showImagePickerDialog(Context context, Activity activity) {
-        final CharSequence[] options = {"Galería", "Fotos", "Cámara", "Archivos"};
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Seleccionar imagen desde")
-                .setItems(options, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (which == 0) {
-                            if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_IMAGE_GALLERY);
-                            } else {
-                                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                                startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
-                            }
-                        } else if (which == 1) {
-                            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                            startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
-                        } else if (which == 2) {
-                            if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA}, REQUEST_IMAGE_CAMERA);
-                            } else {
-                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                startActivityForResult(intent, REQUEST_IMAGE_CAMERA);
-                            }
-                        } else if (which == 3) {
-                            if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_IMAGE_FILES);
-                            } else {
-                                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                                intent.setType("image/*");
-                                startActivityForResult(intent, REQUEST_IMAGE_FILES);
-                            }
-                        }
-                    }
-                })
-                .show();
-    }*/
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == REQUEST_IMAGE_GALLERY || requestCode == REQUEST_IMAGE_CAMERA || requestCode == REQUEST_IMAGE_FILES) {
+            if (requestCode == REQUEST_CODE_SELECT_IMAGE) {
                 if (data != null && data.getData() != null) {
+                    // Mostrar imagen seleccionada desde archivos
                     imageUri = data.getData();
-//                    imgavatar.setImageURI(imageUri);
-                    mostrarImagenSeleccionada(this,imageUri,imgavatar);
-                } else if (photoUri != null) {
-//                    imgavatar.setImageURI(photoUri);
+                    mostrarImagenSeleccionada(this, imageUri, imgavatar);
+                    user.setAvatar(imageUri.toString());
+                    Log.d("RESULT", imageUri.toString());
+                }else {
+                    // Mostrar imagen tomada con la cámara
                     mostrarImagenSeleccionada(this,photoUri,imgavatar);
+                    user.setAvatar(photoUri.toString());
+                    Log.d("RESULT", photoUri.toString());
                 }
+
+
             }
         }
     }
+
 
 
     @Override

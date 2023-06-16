@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -57,7 +58,7 @@ public class Utilidades {
     public static final int REQUEST_IMAGE_FILES = 3;
     public static final int PERMISSION_REQUEST_INTERNET = 4;
     public static final int PERMISSION_REQUEST_READ_EXTERNAL_STORAGE = 5;
-    public static final int REQUEST_IMAGE_PICKER = 1;
+    public static final int REQUEST_CODE_SELECT_IMAGE = 6;
 
     // Método para obtener el trailer de una película
     public static String getTrailer(String title) {
@@ -141,71 +142,6 @@ public class Utilidades {
             mostrarErrorCampo(context, e.getMessage(), "Error");
         }
 
-        /*Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_SEND);
-        intent.putExtra(Intent.EXTRA_TEXT, "Título: " + title +
-                "\nDescripción: " + description +
-                "\nActor principal: " + actor +
-                "\nGénero: " + genero +
-                "\nDirector: " + director +
-                "\nPlataforma de Streaming: " + plataforma +
-                "\nAño de estreno: " + anio +
-                "\nTrailer: " + getTrailer(buscador) +
-                "\nURL de la imagen: " + imageUrl);
-        intent.setType("text/plain");
-        try {
-            context.startActivity(intent);
-        } catch (Exception e) {
-            System.err.println();
-            System.out.println(e.getMessage());
-            mostrarErrorCampo(context,e.getMessage(),"Error");
-            Toast.makeText(context,e.getMessage(),Toast.LENGTH_SHORT).show();
-        }
-//        if(intent.resolveActivity(context.getPackageManager()) != null) {
-//            context.startActivity(intent);
-//        } else {
-//            Toast.makeText(context,"No hay permisos", Toast.LENGTH_SHORT);
-//        }*/
-    }
-
-    // Método para compartir películas con su imagen e información relevante
-    public static void compartirPeliculaa(Context context, Bitmap bitmap, String title, String description, String actor, String genero, String director, String plataforma, Date fechapublicacion) {
-        // Guardar el bitmap en el almacenamiento local
-        Uri imageUri = saveImageToStorage(context, bitmap);
-        LocalDate localDate = dateutilToLocalDate(fechapublicacion);
-        int anio = localDate.getYear();
-        if (imageUri != null) {
-            // Crear el Intent para compartir
-            Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.setType("image/*");
-            // Se define el buscador de youtube
-            String buscador = title + "pelicula";
-//            if(!director.equals("Desconocido")) {
-//                buscador+= director + " trailer español";
-//            }
-            buscador+=" trailer español" + anio;
-            Log.d(TAG, buscador);
-            // Agregar los datos a compartir
-            shareIntent.putExtra(Intent.EXTRA_TEXT, "¡Hey! Te recomiendo ver esta película:" +
-                    "\nTítulo:" + title +
-                    "\nDescripción: " + description +
-                    "\nActor principal: " + actor +
-                    "\nGénero: " + genero +
-                    "\nDirector: " + director +
-                    "\nPlataforma de Streaming: " + plataforma +
-                    "\nTrailer: " + getTrailer(buscador) +
-                    "\nPuedes visitar MovieModerna si quieres encontrar información acerca de esta y más películas ;) [link]");
-            shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
-
-            try {
-                // Iniciar la actividad de compartir
-                context.startActivity(Intent.createChooser(shareIntent, "Compartir película"));
-            } catch (Exception e) {
-                // Mostrar un mensaje de error en caso de que no se pueda compartir
-                Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-                mostrarErrorCampo(context, e.getMessage(), "Error");
-            }
-        }
     }
 
 
@@ -255,27 +191,34 @@ public class Utilidades {
     }
 
     public static void uploadImageToFirebase(Uri imageUri, Usuario user, String TAG) {
-        // Crear una referencia al almacenamiento de Firebase y especificar la ubicación y el nombre del archivo (CAMBIAR POR images/ EN CASO DE FALLO
+        // Crear una referencia al almacenamiento de Firebase y especificar la ubicación y el nombre del archivo
         StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("avatar/" + imageUri.getLastPathSegment());
 
         // Subir el archivo al almacenamiento de Firebase
         storageRef.putFile(imageUri)
                 .addOnSuccessListener(taskSnapshot -> {
                     // La imagen se ha subido exitosamente
+
                     // Obtener la URL de descarga del archivo
-                    storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            String imageUrl = uri.toString();
-                            user.setAvatar(imageUrl);
-                        }
+                    storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+//                        String imageUrl = uri.toString();
+//                        Log.d(TAG, "URL de descarga: " + imageUrl);
+//                        user.setAvatar(imageUrl);
+
+                        // Aquí puedes realizar cualquier acción adicional que dependa de la URL de la imagen
+                        // Por ejemplo, guardar el usuario en la base de datos o mostrar un mensaje de éxito.
+                    }).addOnFailureListener(e -> {
+                        // Error al obtener la URL de descarga
+                        Log.e(TAG, "Error al obtener la URL de descarga: " + e.getMessage());
                     });
+
                 })
                 .addOnFailureListener(e -> {
                     // Error al subir la imagen a Firebase Storage
                     Log.e(TAG, "Error al subir la imagen a Firebase: " + e.getMessage());
                 });
     }
+
 
     // Metodo para pasar un date util a local date
     public static LocalDate dateutilToLocalDate(Date fechaPublicacion) {
@@ -303,56 +246,6 @@ public class Utilidades {
 
         return fechaLocal;
     }
-
-    public static byte[] imageViewToBytes(ImageView imageView) {
-        // Obtener el bitmap del ImageView
-        Bitmap bitmap = imageView.getDrawingCache();
-
-        if (bitmap == null) {
-            imageView.setDrawingCacheEnabled(true);
-            imageView.buildDrawingCache();
-            bitmap = Bitmap.createBitmap(imageView.getDrawingCache());
-            imageView.setDrawingCacheEnabled(false);
-        }
-
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        return stream.toByteArray();
-    }
-
-
-    public static String imageViewToHexBytes(ImageView imageView) {
-        // Obtener el bitmap del ImageView
-        Bitmap bitmap = imageView.getDrawingCache();
-
-        if (bitmap == null) {
-            imageView.setDrawingCacheEnabled(true);
-            imageView.buildDrawingCache();
-            bitmap = Bitmap.createBitmap(imageView.getDrawingCache());
-            imageView.setDrawingCacheEnabled(false);
-        }
-
-        return bitmapToHexBytes(bitmap);
-    }
-
-    private static String bitmapToHexBytes(Bitmap bitmap) {
-        // Comprimir el bitmap en formato PNG sin pérdida de calidad
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-
-        // Obtener los bytes resultantes del bitmap
-        byte[] bytes = stream.toByteArray();
-
-        // Convertir los bytes a formato hexadecimal
-        StringBuilder hexBuilder = new StringBuilder();
-        for (byte b : bytes) {
-            String hex = String.format("%02X", b);
-            hexBuilder.append(hex);
-        }
-
-        return hexBuilder.toString();
-    }
-
 
     // Metodo para validar los valores del formulario
     public static boolean validarFormulario(HashMap<String, String> datosUsuario, Context context) {
@@ -472,11 +365,10 @@ public class Utilidades {
         cameraChooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickPhotoIntent});
 
         // Iniciar la actividad con el intent de elección
-        activity.startActivityForResult(cameraChooserIntent, REQUEST_IMAGE_GALLERY);
+        activity.startActivityForResult(cameraChooserIntent, REQUEST_CODE_SELECT_IMAGE);
     }
 
-
-
+    // Método para crear la foto tomada por la cámara, que se utilizará posteriormente para el registro
     public static File createImageFile(Context context) throws IOException {
         // Crear un archivo con nombre único para guardar la imagen capturada
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
@@ -485,12 +377,17 @@ public class Utilidades {
         return File.createTempFile(imageFileName, ".jpg", storageDir);
     }
 
-
-
+    // Método para mostrar la imagen seleccionada
     public static void mostrarImagenSeleccionada(Context context, Uri uri, ImageView imgavatar) {
         try {
-            // Obtener el Bitmap de la imagen seleccionada
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+            Bitmap bitmap;
+            if (uri.getScheme().equals("content")) {
+                // Si la URI es de la galería, obtener el Bitmap de la imagen seleccionada
+                bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+            } else {
+                // Si la URI es de la cámara, obtener el Bitmap del archivo de imagen
+                bitmap = BitmapFactory.decodeFile(uri.getPath());
+            }
 
             // Calcular las dimensiones del ImageView
             int targetWidth = imgavatar.getWidth();
@@ -505,6 +402,7 @@ public class Utilidades {
             e.printStackTrace();
         }
     }
+
 
 
     public static Bitmap redimensionarBitmap(Bitmap bitmap, int nuevoAncho, int nuevoAlto) {

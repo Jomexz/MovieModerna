@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.example.app_androidmm.utilidades.Utilidades.*;
+import static com.example.app_androidmm.utilidades.Utilidades.REQUEST_CODE_SELECT_IMAGE;
 
 public class ControlConfig extends AppCompatActivity {
     private DrawerLayout drawerLayout;
@@ -46,6 +47,8 @@ public class ControlConfig extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pagina_config);
+
+        final boolean[] cambioFoto = {false};
 
         drawerLayout = findViewById(R.id.drawer_layout);
         menu = findViewById(R.id.navigation_menu);
@@ -71,7 +74,10 @@ public class ControlConfig extends AppCompatActivity {
         btnAvatar = findViewById(R.id.changeAvatarButton);
         btnConfigurar = findViewById(R.id.guardarCambiosButton);
 //        bytesToImageView(user.getAvatar(),imgAvatarConfig);
-        btnAvatar.setOnClickListener(view -> showImagePickerDialog(this,this));
+        btnAvatar.setOnClickListener(view -> {
+                cambioFoto[0] = true;
+                showImagePickerDialog(this,this);
+        });
 
         btnConfigurar.setOnClickListener(view -> {
             alias = txtAliasConfig.getText().toString();
@@ -103,6 +109,9 @@ public class ControlConfig extends AppCompatActivity {
                 }
                 if (!pass.isEmpty() && (pass.equals(newPass))) {
                     updateFields.add("contrasena = '" + pass + "'");
+                }
+                if(cambioFoto[0]) {
+                    updateFields.add("avatar = '" + user.getAvatar() + "'");
                 }
 
                 // Combinar los campos en la consulta SQL
@@ -204,15 +213,21 @@ public class ControlConfig extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == REQUEST_IMAGE_GALLERY || requestCode == REQUEST_IMAGE_CAMERA || requestCode == REQUEST_IMAGE_FILES) {
+            if (requestCode == REQUEST_CODE_SELECT_IMAGE) {
                 if (data != null && data.getData() != null) {
+                    // Mostrar imagen seleccionada desde archivos
                     imageUri = data.getData();
-//                    imgavatar.setImageURI(imageUri);
-                    mostrarImagenSeleccionada(this,imageUri,imgAvatarConfig);
-                } else if (photoUri != null) {
-//                    imgavatar.setImageURI(photoUri);
+                    mostrarImagenSeleccionada(this, imageUri, imgAvatarConfig);
+                    user.setAvatar(imageUri.toString());
+                    Log.d("RESULT", imageUri.toString());
+                }else {
+                    // Mostrar imagen tomada con la cámara
                     mostrarImagenSeleccionada(this,photoUri,imgAvatarConfig);
+                    user.setAvatar(photoUri.toString());
+                    Log.d("RESULT", photoUri.toString());
                 }
+
+
             }
         }
     }
