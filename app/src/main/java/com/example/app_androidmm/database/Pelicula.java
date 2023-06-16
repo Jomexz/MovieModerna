@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 
 import static com.example.app_androidmm.utilidades.Utilidades.datesqlToLocalDate;
 
@@ -31,6 +32,16 @@ public class Pelicula {
             instanciaPelicula = new Pelicula();
         }
         return instanciaPelicula;
+    }
+    private static ArrayList<Pelicula> peliculas = new ArrayList<>();
+
+
+    public static ArrayList<Pelicula> getPeliculas() {
+        return peliculas;
+    }
+
+    public static void setPeliculas(Pelicula pelicula) {
+        Pelicula.peliculas.add(pelicula);
     }
 
     // Constructor
@@ -169,7 +180,7 @@ public class Pelicula {
     }
 
     // Calcula la similitud entre dos películas utilizando técnicas avanzadas de procesamiento de texto
-    public double calcularSimilitud(Pelicula otraPelicula) {
+    /*public double calcularSimilitud(Pelicula otraPelicula) {
         // Preprocesamiento de texto
         String[] genero1 = genero.toLowerCase().split(", ");
         String[] genero2 = otraPelicula.getGenero().toLowerCase().split(", ");
@@ -200,7 +211,73 @@ public class Pelicula {
                 + (similitudProtagonista * pesoProtagonista);
 
         return similitudFinal;
+    }*/
+
+    public double calcularSimilitud(Pelicula otraPelicula) {
+        // Preprocesamiento de texto
+        String[] genero1 = genero.toLowerCase().split(", ");
+        String[] genero2 = otraPelicula.getGenero().toLowerCase().split(", ");
+
+        // Vectorización de texto
+        double[] vector1 = vectorizarTexto(genero1);
+        double[] vector2 = vectorizarTexto(genero2);
+
+        // Cálculo de similitud utilizando la similitud del coseno
+        double similitudGenero = calcularSimilitudCoseno(vector1, vector2);
+        double similitudRating = calcularSimilitudRating(otraPelicula.getRating());
+        double similitudFechaPublicacion = calcularSimilitudFechaPublicacion(datesqlToLocalDate(otraPelicula.getFechaPublicacion()));
+        double similitudDirector = calcularSimilitudTexto(director, otraPelicula.getDirector());
+        double similitudProtagonista = calcularSimilitudTexto(protagonista, otraPelicula.getProtagonista());
+
+        // Contador de atributos conocidos
+        int atributosConocidos = 0;
+
+        // Suma de las similitudes de los atributos conocidos
+        double sumaSimilitudes = 0.0;
+
+        // Ponderación de la similitud de cada atributo según su importancia
+        double pesoGenero = 0.4;
+        double pesoRating = 0.2;
+        double pesoFechaPublicacion = 0.1;
+        double pesoDirector = 0.15;
+        double pesoProtagonista = 0.15;
+
+        // Verificar y agregar las similitudes de los atributos conocidos
+        if (!genero.equalsIgnoreCase("Desconocido") && !otraPelicula.getGenero().equalsIgnoreCase("Desconocido")) {
+            sumaSimilitudes += similitudGenero * pesoGenero;
+            atributosConocidos++;
+        }
+
+        if (rating != 0.0 && otraPelicula.getRating() != 0.0) {
+            sumaSimilitudes += similitudRating * pesoRating;
+            atributosConocidos++;
+        }
+
+        if (fechaPublicacion != null && otraPelicula.getFechaPublicacion() != null) {
+            sumaSimilitudes += similitudFechaPublicacion * pesoFechaPublicacion;
+            atributosConocidos++;
+        }
+
+        if (!director.equalsIgnoreCase("Desconocido") && !otraPelicula.getDirector().equalsIgnoreCase("Desconocido")) {
+            sumaSimilitudes += similitudDirector * pesoDirector;
+            atributosConocidos++;
+        }
+
+        if (!protagonista.equalsIgnoreCase("Desconocido") && !otraPelicula.getProtagonista().equalsIgnoreCase("Desconocido")) {
+            sumaSimilitudes += similitudProtagonista * pesoProtagonista;
+            atributosConocidos++;
+        }
+
+        // Calcular la similitud final ponderada
+        double similitudFinal = 0.0;
+
+        if (atributosConocidos > 0) {
+            similitudFinal = sumaSimilitudes / atributosConocidos;
+        }
+
+        return similitudFinal;
     }
+
 
     // Método para vectorizar el texto utilizando el modelo de la bolsa de palabras (bag of words)
     private double[] vectorizarTexto(String[] texto) {

@@ -193,9 +193,9 @@ public class ControlPuntuar extends AppCompatActivity {
                                             String insert = "INSERT INTO visualizacion (akusuario, fecha, ratingvista, akpelicula)\n" +
                                                     "VALUES (" + user.getPkUsuario() + ", CURRENT_DATE, " + ratingEscalado + ", " + pelicula.getPkPelicula() + ") " +
                                                     "ON CONFLICT (akusuario, akpelicula) DO UPDATE SET ratingvista = EXCLUDED.ratingvista, fecha = EXCLUDED.fecha;" +
-                                                    "UPDATE usuario SET verificado = true WHERE pkusuario = " + user.getPkUsuario() + "AND (SELECT COUNT(*) FROM visualizacion " +
+                                                    "UPDATE usuario SET verificado = true WHERE pkusuario = " + user.getPkUsuario() + " AND (SELECT COUNT(*) FROM visualizacion " +
                                                     "WHERE akusuario = " + user.getPkUsuario() +") > 20 AND verificado = false;";
-
+                                            Log.d("Prueba", insert);
                                             new Thread(() -> {
                                                 connectionManager.executeQuery(insert, new ConnectionManager.QueryCallback() {
                                                     @Override
@@ -215,6 +215,7 @@ public class ControlPuntuar extends AppCompatActivity {
                                                             } else {
                                                                 // Manejar casos de inserción o actualización (rowsAffected contiene el número de filas afectadas)
                                                                 Log.d(TAG, "Filas afectadas: " + rowsAffected);
+                                                                Log.d(TAG, "Query creada: " + insert);
                                                                 Toast.makeText(ControlPuntuar.this, "La película se ha puntuado con éxito. Puntuación: " + rating, Toast.LENGTH_SHORT).show();
                                                             }
                                                         } catch (SQLException e) {

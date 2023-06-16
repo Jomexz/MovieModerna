@@ -47,7 +47,42 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("Nombre de la versión de Android: " + androidVersionName);
 
 
+        // Verificar permisos de escritura en almacenamiento externo
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Solicitar el permiso de escritura en almacenamiento externo
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    PERMISSION_REQUEST_EXTERNAL_STORAGE);
+        } else {
+            Toast.makeText(MainActivity.this,"PERMISO DE ESCRITURA DENEGADO", Toast.LENGTH_SHORT);
+            System.out.println("PERMISO DE ESCRITURA DENEGADO");
+        }
 
+        // Verificar permisos de acceso a Internet
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.INTERNET)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Solicitar el permiso de acceso a Internet
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.INTERNET},
+                    PERMISSION_REQUEST_INTERNET);
+        } else {
+            // Permiso ya concedido
+            Toast.makeText(MainActivity.this, "Permiso de acceso a Internet concedido", Toast.LENGTH_SHORT).show();
+            System.out.println("Permiso de acceso a Internet concedidoo0o0o0o0o0o!");
+        }
+
+        // Verificar permisos de acceso a la galería de fotos
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Solicitar el permiso de acceso a la galería de fotos
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    PERMISSION_REQUEST_READ_EXTERNAL_STORAGE);
+        } else {
+            Toast.makeText(MainActivity.this,"PERMISO DE LECTURA DENEGADO", Toast.LENGTH_SHORT);
+            System.out.println("PERMISO DE LECTURA DENEGADO");
+        }
 
         btnEntrar = findViewById(R.id.loginButton);
         btnEntrar.setOnClickListener(view -> {
@@ -86,42 +121,7 @@ public class MainActivity extends AppCompatActivity {
                             Log.d(TAG, user.toString());
                             // Verificar la contraseña
                             if (pass.equals(passUser)) {
-                                // Verificar permisos de escritura en almacenamiento externo
-                                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                        != PackageManager.PERMISSION_GRANTED) {
-                                    // Solicitar el permiso de escritura en almacenamiento externo
-                                    ActivityCompat.requestPermissions(MainActivity.this,
-                                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                            PERMISSION_REQUEST_EXTERNAL_STORAGE);
-                                } else {
-                                    Toast.makeText(MainActivity.this,"PERMISO DE ESCRITURA DENEGADO", Toast.LENGTH_SHORT);
-                                    System.out.println("PERMISO DE ESCRITURA DENEGADO");
-                                }
 
-                                // Verificar permisos de acceso a Internet
-                                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.INTERNET)
-                                        != PackageManager.PERMISSION_GRANTED) {
-                                    // Solicitar el permiso de acceso a Internet
-                                    ActivityCompat.requestPermissions(MainActivity.this,
-                                            new String[]{Manifest.permission.INTERNET},
-                                            PERMISSION_REQUEST_INTERNET);
-                                } else {
-                                    // Permiso ya concedido
-                                    Toast.makeText(MainActivity.this, "Permiso de acceso a Internet concedido", Toast.LENGTH_SHORT).show();
-                                    System.out.println("Permiso de acceso a Internet concedidoo0o0o0o0o0o!");
-                                }
-
-                                // Verificar permisos de acceso a la galería de fotos
-                                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                                        != PackageManager.PERMISSION_GRANTED) {
-                                    // Solicitar el permiso de acceso a la galería de fotos
-                                    ActivityCompat.requestPermissions(MainActivity.this,
-                                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                                            PERMISSION_REQUEST_READ_EXTERNAL_STORAGE);
-                                } else {
-                                    Toast.makeText(MainActivity.this,"PERMISO DE LECTURA DENEGADO", Toast.LENGTH_SHORT);
-                                    System.out.println("PERMISO DE LECTURA DENEGADO");
-                                }
 
                                 System.out.println("Se ha iniciado sesión");
                                 redirectActivity(MainActivity.this, ControlBienvenido.class);
