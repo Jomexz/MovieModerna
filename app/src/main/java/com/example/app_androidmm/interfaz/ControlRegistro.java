@@ -200,18 +200,15 @@ public class ControlRegistro extends AppCompatActivity {
                     mostrarImagenSeleccionada(this, imageUri, imgavatar);
                     user.setAvatar(imageUri.toString());
                     Log.d("RESULT", imageUri.toString());
-                }else {
+                } else {
                     // Mostrar imagen tomada con la cámara
-                    mostrarImagenSeleccionada(this,photoUri,imgavatar);
+                    mostrarImagenSeleccionada(this, photoUri, imgavatar);
                     user.setAvatar(photoUri.toString());
                     Log.d("RESULT", photoUri.toString());
                 }
-
-
             }
         }
     }
-
 
 
     @Override

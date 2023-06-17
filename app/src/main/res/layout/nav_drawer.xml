@@ -94,7 +94,7 @@
                   android:id="@+id/exit"
                   android:orientation="horizontal">
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                  android:text="Cerrar sesión"
+                  android:text=" Cerrar sesión"
                   android:textColor="@color/navigationColor"
                   android:drawableLeft="@drawable/ic_exit"
                   android:padding="8dp"

@@ -33,7 +33,6 @@ public class ControlConfig extends AppCompatActivity {
     private ImageView menu, navAvatar;
     private TextView navUser, navNombre;
     private LinearLayout home, settings, info, logout, share;
-    private static final int REQUEST_CODE_SELECT_IMAGE = 1;
     private static final String TAG = "ControlConfig";
     private Button btnAvatar, btnConfigurar;
     private ImageView imgAvatarConfig;
@@ -42,6 +41,7 @@ public class ControlConfig extends AppCompatActivity {
     private ConnectionManager connectionManager = new ConnectionManager();
     private Usuario user = Usuario.getInstance();
     private Uri imageUri;
+
     @SuppressLint("WrongThread")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,12 +60,12 @@ public class ControlConfig extends AppCompatActivity {
         navAvatar = findViewById(R.id.nav_avatar);
         navUser = findViewById(R.id.nav_user);
         navNombre = findViewById(R.id.nav_nameuser);
-        loadImageFromUrl(user.getAvatar(),navAvatar);
+        loadImageFromUrl(user.getAvatar(), navAvatar);
         navUser.setText(user.getAlias());
         navNombre.setText(user.getNombre() + " " + user.getApellidos());
 
         imgAvatarConfig = findViewById(R.id.imgAvatarC);
-        loadImageFromUrl(user.getAvatar(),imgAvatarConfig);
+        loadImageFromUrl(user.getAvatar(), imgAvatarConfig);
         txtAliasConfig = findViewById(R.id.aliasEditText);
         txtNombreConfig = findViewById(R.id.nombreEditText);
         txtApellidosconfig = findViewById(R.id.apellidosEditText);
@@ -73,10 +73,10 @@ public class ControlConfig extends AppCompatActivity {
         txtConfirmPassConfig = findViewById(R.id.confirmarContrasenaEditText);
         btnAvatar = findViewById(R.id.changeAvatarButton);
         btnConfigurar = findViewById(R.id.guardarCambiosButton);
-//        bytesToImageView(user.getAvatar(),imgAvatarConfig);
         btnAvatar.setOnClickListener(view -> {
-                cambioFoto[0] = true;
-                showImagePickerDialog(this,this);
+            cambioFoto[0] = true;
+            // Lanzar el selector de imágenes
+            showImagePickerDialog(this, this);
         });
 
         btnConfigurar.setOnClickListener(view -> {
@@ -110,7 +110,7 @@ public class ControlConfig extends AppCompatActivity {
                 if (!pass.isEmpty() && (pass.equals(newPass))) {
                     updateFields.add("contrasena = '" + pass + "'");
                 }
-                if(cambioFoto[0]) {
+                if (cambioFoto[0]) {
                     updateFields.add("avatar = '" + user.getAvatar() + "'");
                 }
 
@@ -140,15 +140,12 @@ public class ControlConfig extends AppCompatActivity {
                                 }
                             } else {
                                 // Manejar casos de inserción o actualización (rowsAffected contiene el número de filas afectadas)
-                                Log.d(TAG, "Filas afectadas: " + rowsAffected);
-                                if (imageUri != null) {
-                                    uploadImageToFirebase(imageUri, user, TAG);
-                                } else if (photoUri != null) {
-                                    uploadImageToFirebase(photoUri, user, TAG);
-                                }
+                                Log.d(TAG, "Usuario: " + user.toString());
+                                Log.d("LATER QUERY", photoUri.toString());
                                 mostrarErrorCampo(ControlConfig.this, "La cuenta se ha actualizado con éxito", "Configuración de cuenta");
                                 Intent intent = new Intent(ControlConfig.this, ControlBienvenido.class);
                                 startActivity(intent);
+                                photoUri = null;
                             }
                         } catch (SQLException e) {
                             Log.e(TAG, "Error al procesar los resultados: " + e.getMessage());
@@ -164,12 +161,13 @@ public class ControlConfig extends AppCompatActivity {
             }).start();
 
         });
+
         menu.setOnClickListener(view -> {
             openDrawer(drawerLayout);
         });
 
         home.setOnClickListener(view -> {
-            redirectActivity(this,ControlBienvenido.class);
+            redirectActivity(this, ControlBienvenido.class);
         });
 
         settings.setOnClickListener(view -> {
@@ -181,7 +179,7 @@ public class ControlConfig extends AppCompatActivity {
         });
 
         logout.setOnClickListener(view -> {
-            Toast.makeText(this,"Has cerrado sesión correctamente", Toast.LENGTH_SHORT);
+            Toast.makeText(this, "Has cerrado sesión correctamente", Toast.LENGTH_SHORT);
             user = null; // Borramos los datos del usuario
             redirectActivity(this, MainActivity.class);
 
@@ -194,10 +192,10 @@ public class ControlConfig extends AppCompatActivity {
                     "Descubre películas increíbles y genera recomendaciones personalizadas con MovieModerna. ¡Explora el mundo del cine y comparte tus descubrimientos!" +
                     " Haz que cada noche de cine sea especial. Descarga MovieModerna ahora mismo: [link]");
             intent.setType("text/plain");
-            if(intent.resolveActivity(getPackageManager()) != null) {
+            if (intent.resolveActivity(getPackageManager()) != null) {
                 startActivity(intent);
             } else {
-                Toast.makeText(this,"No hay permisos", Toast.LENGTH_SHORT);
+                Toast.makeText(this, "No hay permisos", Toast.LENGTH_SHORT);
             }
         });
     }
@@ -220,14 +218,12 @@ public class ControlConfig extends AppCompatActivity {
                     mostrarImagenSeleccionada(this, imageUri, imgAvatarConfig);
                     user.setAvatar(imageUri.toString());
                     Log.d("RESULT", imageUri.toString());
-                }else {
+                } else {
                     // Mostrar imagen tomada con la cámara
-                    mostrarImagenSeleccionada(this,photoUri,imgAvatarConfig);
+                    mostrarImagenSeleccionada(this, photoUri, imgAvatarConfig);
                     user.setAvatar(photoUri.toString());
                     Log.d("RESULT", photoUri.toString());
                 }
-
-
             }
         }
     }
