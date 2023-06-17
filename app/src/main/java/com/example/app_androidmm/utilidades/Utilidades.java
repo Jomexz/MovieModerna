@@ -201,9 +201,9 @@ public class Utilidades {
 
                     // Obtener la URL de descarga del archivo
                     storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-//                        String imageUrl = uri.toString();
-//                        Log.d(TAG, "URL de descarga: " + imageUrl);
-//                        user.setAvatar(imageUrl);
+                        String imageUrl = uri.toString();
+                        Log.d(TAG, "URL de descarga: " + imageUrl);
+                        user.setAvatar(imageUrl);
 
                         // Aquí puedes realizar cualquier acción adicional que dependa de la URL de la imagen
                         // Por ejemplo, guardar el usuario en la base de datos o mostrar un mensaje de éxito.

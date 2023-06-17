@@ -11,4 +11,5 @@
     <color name="pressed_color">#FF595858</color>
     <color name="default_color">#FFFFFF</color>
     <color name="disabled_color">#ed1c24</color>
+    <color name="gris">#cccccc</color>
 </resources>

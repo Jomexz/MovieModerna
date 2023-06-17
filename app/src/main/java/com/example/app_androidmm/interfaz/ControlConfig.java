@@ -216,12 +216,12 @@ public class ControlConfig extends AppCompatActivity {
                     // Mostrar imagen seleccionada desde archivos
                     imageUri = data.getData();
                     mostrarImagenSeleccionada(this, imageUri, imgAvatarConfig);
-                    user.setAvatar(imageUri.toString());
+                    uploadImageToFirebase(imageUri,user,TAG);
                     Log.d("RESULT", imageUri.toString());
                 } else {
                     // Mostrar imagen tomada con la cámara
                     mostrarImagenSeleccionada(this, photoUri, imgAvatarConfig);
-                    user.setAvatar(photoUri.toString());
+                    uploadImageToFirebase(photoUri,user,TAG);
                     Log.d("RESULT", photoUri.toString());
                 }
             }

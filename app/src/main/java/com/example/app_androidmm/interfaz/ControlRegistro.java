@@ -198,12 +198,12 @@ public class ControlRegistro extends AppCompatActivity {
                     // Mostrar imagen seleccionada desde archivos
                     imageUri = data.getData();
                     mostrarImagenSeleccionada(this, imageUri, imgavatar);
-                    user.setAvatar(imageUri.toString());
+                    uploadImageToFirebase(imageUri,user,TAG);
                     Log.d("RESULT", imageUri.toString());
                 } else {
                     // Mostrar imagen tomada con la cámara
                     mostrarImagenSeleccionada(this, photoUri, imgavatar);
-                    user.setAvatar(photoUri.toString());
+                    uploadImageToFirebase(photoUri,user,TAG);
                     Log.d("RESULT", photoUri.toString());
                 }
             }

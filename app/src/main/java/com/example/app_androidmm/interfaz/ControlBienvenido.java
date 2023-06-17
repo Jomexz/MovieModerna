@@ -146,7 +146,7 @@ public class ControlBienvenido extends AppCompatActivity {
                 redirectActivity(this, ControlGenerar.class);
             } else {
                 System.out.println("No es verificado");
-                Toast.makeText(this, "El usuario debe estar verificado. Número de películas valoradas mínimo: 20.", Toast.LENGTH_LONG);
+                mostrarErrorCampo(this,"El usuario debe estar verificado. Número de películas valoradas mínimo: 20.","¡Valora primero!");
             }
         });
     }

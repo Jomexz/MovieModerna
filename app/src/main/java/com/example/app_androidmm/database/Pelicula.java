@@ -236,10 +236,10 @@ public class Pelicula {
         double sumaSimilitudes = 0.0;
 
         // Ponderación de la similitud de cada atributo según su importancia
-        double pesoGenero = 0.3;
-        double pesoRating = 0.2;
-        double pesoFechaPublicacion = 0.2;
-        double pesoDirector = 0.15;
+        double pesoGenero = 0.35;
+        double pesoRating = 0.25;
+        double pesoFechaPublicacion = 0.15;
+        double pesoDirector = 0.10;
         double pesoProtagonista = 0.15;
 
         // Verificar y agregar las similitudes de los atributos conocidos

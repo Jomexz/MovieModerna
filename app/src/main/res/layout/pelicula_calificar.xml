@@ -130,8 +130,7 @@
                     android:layout_height="wrap_content"
                     android:text="Puntuación:"
                     android:textStyle="bold"
-                    android:textColor="#FFFFFF"
-                    android:layout_marginLeft="10dp"/>
+                    android:textColor="#FFFFFF"/>
 
             <RatingBar
                     android:id="@+id/ratingBar"

@@ -71,6 +71,7 @@
 
         <EditText
                 android:id="@+id/txtPass"
+                android:inputType="textPassword"
                 android:layout_width="230dp"
                 android:layout_height="35dp"
                 android:layout_below="@id/txtCorreo"
@@ -85,6 +86,7 @@
 
         <EditText
                 android:id="@+id/txtPassConfirm"
+                android:inputType="textPassword"
                 android:layout_width="230dp"
                 android:layout_height="35dp"
                 android:layout_below="@id/txtPass"
