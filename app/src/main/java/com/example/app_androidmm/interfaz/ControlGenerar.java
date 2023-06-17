@@ -131,6 +131,105 @@ public class ControlGenerar extends AppCompatActivity {
                             peliculasUsuario.add(pelicula1);
                         }
                         System.out.println("--------------------------");
+
+                        connectionManager.executeQuery("select * from pelicula", new ConnectionManager.QueryCallback() {
+                            @Override
+                            public void onQueryCompleted(ResultSet resultSet, int rowsAffected) {
+                                // Las peliculas totales se cargan solo una vez para evitar sobrecarga de datos
+                                if (peliculasTotales.isEmpty()) {
+                                    System.out.println("PELICULAS GENERALES: ");
+                                    try {
+                                        while (resultSet.next()) {
+                                            pelicula = new Pelicula(); // Crear una nueva instancia de Pelicula en cada iteración
+                                            pelicula.setPkPelicula(resultSet.getInt("pkpelicula"));
+                                            pelicula.setTitulo(resultSet.getString("titulo"));
+                                            pelicula.setDescripcion(resultSet.getString("descripcion"));
+                                            pelicula.setRating((float) resultSet.getDouble("rating"));
+                                            pelicula.setImagen(resultSet.getString("imagen"));
+                                            pelicula.setGenero(resultSet.getString("genero"));
+                                            pelicula.setCalificacion(resultSet.getString("calificacion"));
+                                            pelicula.setDirector(resultSet.getString("director"));
+                                            pelicula.setFechaPublicacion(resultSet.getDate("fechapublicacion"));
+                                            pelicula.setProtagonista(resultSet.getString("protagonista"));
+                                            pelicula.setPlataforma(resultSet.getString("plataforma"));
+//                            System.out.println(pelicula.getTitulo());
+                                            peliculasTotales.add(pelicula);
+                                        }
+                                        // Crear una lista de todas las películas de la aplicación (excluyendo las del historial del usuario)
+                                        peliculasTotales.removeAll(peliculasUsuario);
+                                    } catch (SQLException e) {
+                                        Log.e(TAG, "Error al obtener películas: " + e.getMessage());
+                                        throw new RuntimeException(e);
+                                    }
+                                    System.out.println("---------------------");
+                                }
+                                boolean resultados = false;
+                                // Ejecutar la similitud para cada pelicula
+
+                                // Calcular la similitud entre cada película del historial y todas las películas de la aplicación
+                                Map<Pelicula, Double> similitudPeliculas = new HashMap<>();
+                                if (peliculasUsuario != null && peliculasTotales != null) {
+                                    resultados = true;
+                                    for (Pelicula peliculaHistorial : peliculasUsuario) {
+                                        for (Pelicula peliculaApp : peliculasTotales) {
+                                            double similitud = peliculaHistorial.calcularSimilitud(peliculaApp);
+                                            similitudPeliculas.put(peliculaApp, similitud);
+                                        }
+                                    }
+                                } else {
+                                    // Manejo del caso en que alguna de las listas sea nula
+                                    Log.e(TAG, "La lista peliculasUsuario o peliculasTotales es nula");
+                                }
+
+
+                                boolean finalResultados = resultados;
+                                runOnUiThread(() -> {
+                                    // Ordenar las películas según su similitud (de mayor a menor)
+                                    List<Pelicula> peliculasRecomendadas = new ArrayList<>(similitudPeliculas.keySet());
+                                    Collections.sort(peliculasRecomendadas, (p1, p2) -> Double.compare(similitudPeliculas.get(p2), similitudPeliculas.get(p1)));
+
+                                    // Obtener las mejores películas recomendadas
+                                    List<Pelicula> mejoresRecomendaciones = peliculasRecomendadas.subList(0, Math.min(20, peliculasRecomendadas.size()));
+
+                                    // Mostrar las mejores películas recomendadas al usuario
+                                    System.out.println("PELICULAS RECOMENDADAS:");
+                                    for (Pelicula recomendacion : mejoresRecomendaciones) {
+                                        System.out.println(recomendacion.getTitulo() + "  " + recomendacion.getImagen());
+                                    }
+
+                                    if (recyclerView != null) {
+                                        recyclerView.setHasFixedSize(true);
+                                        recyclerView.setLayoutManager(new LinearLayoutManager(ControlGenerar.this));
+                                    }
+                                    if (finalResultados) {
+                                        adaptadorCompartir = new AdaptadorCompartir(mejoresRecomendaciones, ControlGenerar.this, ControlGenerar.this);
+                                        recyclerView.setHasFixedSize(true);
+                                        recyclerView.setLayoutManager(new LinearLayoutManager(ControlGenerar.this));
+
+                                        adaptadorCompartir.setOnShareClickListener((bitmap, title, description, actor, genero, director, plataforma, fechapublicacion, adapterPosition) -> {
+                                            // Obtener la película correspondiente a la posición en el adaptador
+                                            pelicula = peliculasTotales.get(adapterPosition);
+                                            String imageUrl = pelicula.getImagen();
+
+                                            // El permiso de almacenamiento ya está concedido, descargar y compartir la imagen
+                                            runOnUiThread(() -> {
+                                                descargarYCompartirImagen(TAG, ControlGenerar.this, imageUrl, title, description, actor, genero, director, plataforma, fechapublicacion);
+                                            });
+                                        });
+                                        recyclerView.setAdapter(adaptadorCompartir);
+                                    } else {
+                                        Toast.makeText(ControlGenerar.this, "No se encontraron películas.", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+
+                            }
+
+                            @Override
+                            public void onQueryFailed(String error) {
+                                Log.e(TAG, "Error al ejecutar query: " + error);
+                            }
+                        });
                     } catch (SQLException e) {
                         Log.e(TAG, "Error al obtener películas: " + e.getMessage());
                         throw new RuntimeException(e);
@@ -147,104 +246,7 @@ public class ControlGenerar extends AppCompatActivity {
             });
         }).start();
 
-        connectionManager.executeQuery("select * from pelicula", new ConnectionManager.QueryCallback() {
-            @Override
-            public void onQueryCompleted(ResultSet resultSet, int rowsAffected) {
-                // Las peliculas totales se cargan solo una vez para evitar sobrecarga de datos
-                if (peliculasTotales.isEmpty()) {
-                    System.out.println("PELICULAS GENERALES: ");
-                    try {
-                        while (resultSet.next()) {
-                            pelicula = new Pelicula(); // Crear una nueva instancia de Pelicula en cada iteración
-                            pelicula.setPkPelicula(resultSet.getInt("pkpelicula"));
-                            pelicula.setTitulo(resultSet.getString("titulo"));
-                            pelicula.setDescripcion(resultSet.getString("descripcion"));
-                            pelicula.setRating((float) resultSet.getDouble("rating"));
-                            pelicula.setImagen(resultSet.getString("imagen"));
-                            pelicula.setGenero(resultSet.getString("genero"));
-                            pelicula.setCalificacion(resultSet.getString("calificacion"));
-                            pelicula.setDirector(resultSet.getString("director"));
-                            pelicula.setFechaPublicacion(resultSet.getDate("fechapublicacion"));
-                            pelicula.setProtagonista(resultSet.getString("protagonista"));
-                            pelicula.setPlataforma(resultSet.getString("plataforma"));
-                            System.out.println(pelicula.getTitulo());
-                            peliculasTotales.add(pelicula);
-                        }
-                        // Crear una lista de todas las películas de la aplicación (excluyendo las del historial del usuario)
-                        peliculasTotales.removeAll(peliculasUsuario);
-                    } catch (SQLException e) {
-                        Log.e(TAG, "Error al obtener películas: " + e.getMessage());
-                        throw new RuntimeException(e);
-                    }
-                    System.out.println("---------------------");
-                }
 
-                // Ejecutar la similitud para cada pelicula
-
-                // Calcular la similitud entre cada película del historial y todas las películas de la aplicación
-                Map<Pelicula, Double> similitudPeliculas = new HashMap<>();
-                if (peliculasUsuario != null && peliculasTotales != null) {
-                    for (Pelicula peliculaHistorial : peliculasUsuario) {
-                        for (Pelicula peliculaApp : peliculasTotales) {
-                            double similitud = peliculaHistorial.calcularSimilitud(peliculaApp);
-                            similitudPeliculas.put(peliculaApp, similitud);
-                        }
-                    }
-                } else {
-                    // Manejo del caso en que alguna de las listas sea nula
-                    Log.e(TAG, "La lista peliculasUsuario o peliculasTotales es nula");
-                }
-
-                // Ordenar las películas según su similitud (de mayor a menor)
-                List<Pelicula> peliculasRecomendadas = new ArrayList<>(similitudPeliculas.keySet());
-                Collections.sort(peliculasRecomendadas, (p1, p2) -> Double.compare(similitudPeliculas.get(p2), similitudPeliculas.get(p1)));
-
-                // Obtener las mejores películas recomendadas
-                List<Pelicula> mejoresRecomendaciones = peliculasRecomendadas.subList(0, Math.min(20, peliculasRecomendadas.size()));
-
-                // Mostrar las mejores películas recomendadas al usuario
-                System.out.println("PELICULAS RECOMENDADAS:");
-                boolean resultados = false;
-                for (Pelicula recomendacion : mejoresRecomendaciones) {
-                    System.out.println(recomendacion.getTitulo() + "  " + recomendacion.getImagen());
-                    resultados = true;
-                }
-
-                boolean finalResultados = resultados;
-                runOnUiThread(() -> {
-                    if (recyclerView != null) {
-                        recyclerView.setHasFixedSize(true);
-                        recyclerView.setLayoutManager(new LinearLayoutManager(ControlGenerar.this));
-                    }
-                    if (finalResultados) {
-                        adaptadorCompartir = new AdaptadorCompartir(mejoresRecomendaciones, ControlGenerar.this, ControlGenerar.this);
-                        recyclerView.setHasFixedSize(true);
-                        recyclerView.setLayoutManager(new LinearLayoutManager(ControlGenerar.this));
-
-                        adaptadorCompartir.setOnShareClickListener((bitmap, title, description, actor, genero, director, plataforma, fechapublicacion, adapterPosition) -> {
-                            // Obtener la película correspondiente a la posición en el adaptador
-                            pelicula = peliculasTotales.get(adapterPosition);
-                            String imageUrl = pelicula.getImagen();
-
-                            // El permiso de almacenamiento ya está concedido, descargar y compartir la imagen
-                            runOnUiThread(() -> {
-                                descargarYCompartirImagen(TAG, ControlGenerar.this, imageUrl, title, description, actor, genero, director, plataforma, fechapublicacion);
-                            });
-                        });
-                        recyclerView.setAdapter(adaptadorCompartir);
-                    } else {
-                        Toast.makeText(ControlGenerar.this, "No se encontraron películas.", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-
-            }
-
-            @Override
-            public void onQueryFailed(String error) {
-                Log.e(TAG, "Error al ejecutar query: " + error);
-            }
-        });
 
 
     }

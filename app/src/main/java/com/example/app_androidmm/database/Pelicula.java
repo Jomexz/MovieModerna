@@ -236,9 +236,9 @@ public class Pelicula {
         double sumaSimilitudes = 0.0;
 
         // Ponderación de la similitud de cada atributo según su importancia
-        double pesoGenero = 0.4;
+        double pesoGenero = 0.3;
         double pesoRating = 0.2;
-        double pesoFechaPublicacion = 0.1;
+        double pesoFechaPublicacion = 0.2;
         double pesoDirector = 0.15;
         double pesoProtagonista = 0.15;
 
