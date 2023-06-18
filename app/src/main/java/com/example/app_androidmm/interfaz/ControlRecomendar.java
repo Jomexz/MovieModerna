@@ -113,7 +113,8 @@ public class ControlRecomendar extends AppCompatActivity {
         listaPeliculas = new ArrayList<>();
 
         recyclerView = findViewById(R.id.recyclerView);
-
+        String queryRandom = "select * from pelicula where rating >= 8 order by random() limit 15";
+        buscar(queryRandom);
         btnBuscar.setOnClickListener(view -> {
             String busca = buscador.getText().toString();
             if (!busca.isEmpty()) {
@@ -144,76 +145,8 @@ public class ControlRecomendar extends AppCompatActivity {
                         }
                         break;
                 }
-
                 String finalQuery = query;
-                new Thread(() -> {
-                    connectionManager.executeQuery(finalQuery, new ConnectionManager.QueryCallback() {
-                        @Override
-                        public void onQueryCompleted(ResultSet resultSet, int rowsAffected) {
-                            runOnUiThread(() -> {
-                                if (adaptadorCompartir != null) {
-                                    adaptadorCompartir.clearViews();
-                                    adaptadorCompartir.notifyDataSetChanged();
-                                }
-                            });
-                            boolean resultados = false;
-                            try {
-                                while (resultSet.next()) {
-                                    Pelicula p = new Pelicula();
-                                    p.setPkPelicula(resultSet.getInt("pkpelicula"));
-                                    p.setTitulo(resultSet.getString("titulo"));
-                                    p.setDescripcion(resultSet.getString("descripcion"));
-                                    p.setRating((float) resultSet.getDouble("rating"));
-                                    p.setImagen(resultSet.getString("imagen"));
-                                    p.setGenero(resultSet.getString("genero"));
-                                    p.setCalificacion(resultSet.getString("calificacion"));
-                                    p.setDirector(resultSet.getString("director"));
-                                    p.setFechaPublicacion(resultSet.getDate("fechapublicacion"));
-                                    p.setProtagonista(resultSet.getString("protagonista"));
-                                    p.setPlataforma(resultSet.getString("plataforma"));
-//                                    Log.d(TAG, p.toString());
-                                    listaPeliculas.add(p);
-                                    resultados = true;
-                                }
-                                System.out.println("Peliculas cargadas: " + rowsAffected);
-                                boolean finalResultados = resultados;
-
-                                runOnUiThread(() -> {
-                                    if (finalResultados) {
-                                        adaptadorCompartir = new AdaptadorCompartir(listaPeliculas, ControlRecomendar.this, ControlRecomendar.this);
-                                        recyclerView.setHasFixedSize(true);
-                                        recyclerView.setLayoutManager(new LinearLayoutManager(ControlRecomendar.this));
-
-                                        adaptadorCompartir.setOnShareClickListener((bitmap, title, description, actor, genero, director, plataforma, fechapublicacion, adapterPosition) -> {
-                                            // Obtener la película correspondiente a la posición en el adaptador
-                                            pelicula = listaPeliculas.get(adapterPosition);
-                                            String imageUrl = pelicula.getImagen();
-
-                                            // El permiso de almacenamiento ya está concedido, descargar y compartir la imagen
-                                            runOnUiThread(() -> {
-                                                descargarYCompartirImagen(TAG, ControlRecomendar.this, imageUrl, title, description, actor, genero, director, plataforma, fechapublicacion);
-//                                                    compartirPrueba(ControlRecomendar.this,title,description,actor,genero,director,plataforma);
-                                            });
-
-
-
-                                        });
-                                        recyclerView.setAdapter(adaptadorCompartir);
-                                    } else {
-                                        Toast.makeText(ControlRecomendar.this, "No se encontraron películas.", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            } catch (SQLException e) {
-                                Log.e(TAG, "Error al procesar los resultados: " + e.getMessage());
-                            }
-                        }
-
-                        @Override
-                        public void onQueryFailed(String error) {
-                            Log.e(TAG, error);
-                        }
-                    });
-                }).start();
+                buscar(finalQuery);
             } else {
                 Toast.makeText(ControlRecomendar.this, "Por favor, ingrese un término de búsqueda.", Toast.LENGTH_SHORT).show();
             }
@@ -255,5 +188,76 @@ public class ControlRecomendar extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         closeDrawer(drawerLayout);
+    }
+
+    private void buscar(String query) {
+        new Thread(() -> {
+            connectionManager.executeQuery(query, new ConnectionManager.QueryCallback() {
+                @Override
+                public void onQueryCompleted(ResultSet resultSet, int rowsAffected) {
+                    runOnUiThread(() -> {
+                        if (adaptadorCompartir != null) {
+                            adaptadorCompartir.clearViews();
+                            adaptadorCompartir.notifyDataSetChanged();
+                        }
+                    });
+                    boolean resultados = false;
+                    try {
+                        while (resultSet.next()) {
+                            Pelicula p = new Pelicula();
+                            p.setPkPelicula(resultSet.getInt("pkpelicula"));
+                            p.setTitulo(resultSet.getString("titulo"));
+                            p.setDescripcion(resultSet.getString("descripcion"));
+                            p.setRating((float) resultSet.getDouble("rating"));
+                            p.setImagen(resultSet.getString("imagen"));
+                            p.setGenero(resultSet.getString("genero"));
+                            p.setCalificacion(resultSet.getString("calificacion"));
+                            p.setDirector(resultSet.getString("director"));
+                            p.setFechaPublicacion(resultSet.getDate("fechapublicacion"));
+                            p.setProtagonista(resultSet.getString("protagonista"));
+                            p.setPlataforma(resultSet.getString("plataforma"));
+//                                    Log.d(TAG, p.toString());
+                            listaPeliculas.add(p);
+                            resultados = true;
+                        }
+                        System.out.println("Peliculas cargadas: " + rowsAffected);
+                        boolean finalResultados = resultados;
+
+                        runOnUiThread(() -> {
+                            if (finalResultados) {
+                                adaptadorCompartir = new AdaptadorCompartir(listaPeliculas, ControlRecomendar.this, ControlRecomendar.this);
+                                recyclerView.setHasFixedSize(true);
+                                recyclerView.setLayoutManager(new LinearLayoutManager(ControlRecomendar.this));
+
+                                adaptadorCompartir.setOnShareClickListener((bitmap, title, description, actor, genero, director, plataforma, fechapublicacion, adapterPosition) -> {
+                                    // Obtener la película correspondiente a la posición en el adaptador
+                                    pelicula = listaPeliculas.get(adapterPosition);
+                                    String imageUrl = pelicula.getImagen();
+
+                                    // El permiso de almacenamiento ya está concedido, descargar y compartir la imagen
+                                    runOnUiThread(() -> {
+                                        descargarYCompartirImagen(TAG, ControlRecomendar.this, imageUrl, title, description, actor, genero, director, plataforma, fechapublicacion);
+//                                                    compartirPrueba(ControlRecomendar.this,title,description,actor,genero,director,plataforma);
+                                    });
+
+
+
+                                });
+                                recyclerView.setAdapter(adaptadorCompartir);
+                            } else {
+                                Toast.makeText(ControlRecomendar.this, "No se encontraron películas.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } catch (SQLException e) {
+                        Log.e(TAG, "Error al procesar los resultados: " + e.getMessage());
+                    }
+                }
+
+                @Override
+                public void onQueryFailed(String error) {
+                    Log.e(TAG, error);
+                }
+            });
+        }).start();
     }
 }

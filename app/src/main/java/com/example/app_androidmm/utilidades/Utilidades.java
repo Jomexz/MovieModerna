@@ -22,7 +22,6 @@ import androidx.core.content.FileProvider;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.app_androidmm.database.Usuario;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
@@ -34,7 +33,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -45,8 +43,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.regex.Pattern;
-
-import static androidx.core.content.ContextCompat.startActivity;
 
 /**
  * @author Jose
@@ -295,18 +291,30 @@ public class Utilidades {
 
 
     // Metodo para cargar imagen desde una url
-    public static void loadImageFromUrl(String imageUrl, ImageView imageView) {
+    public static void loadImageMovie(String imageUrl, ImageView imageView) {
         Picasso.get()
                 .load(imageUrl)
                 .into(imageView);
     }
 
-    // Metodo para cargar imagen desde una url a un imagebutton
-    public static void loadimageButtonFromUrl(String url, ImageButton imageButton) {
-        Picasso.get()
-                .load(url)
-                .into(imageButton);
+    // Método para cargar imagen desde una url
+    public static void loadImageFromUrl(String imageUrl, ImageView imageView) {
+        int targetWidth = imageView.getWidth();
+        int targetHeight = imageView.getHeight();
+
+        if (targetWidth > 0 && targetHeight > 0) {
+            Picasso.get()
+                    .load(imageUrl)
+                    .resize(targetWidth, targetHeight)
+                    .centerCrop()
+                    .into(imageView);
+        } else {
+            Picasso.get()
+                    .load(imageUrl)
+                    .into(imageView);
+        }
     }
+
 
     // Metodo para mostrar un alert de error
     public static void mostrarErrorCampo(Context context, String mensaje, String titulo) {
@@ -315,19 +323,6 @@ public class Utilidades {
                 .setMessage(mensaje)
                 .setPositiveButton("Aceptar", null)
                 .show();
-    }
-
-    public static void seleccionarImagen(Activity activity, int requestCode) {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-
-        Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        Intent chooserIntent = Intent.createChooser(intent, "Seleccionar imagen");
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takePhotoIntent});
-
-        activity.startActivityForResult(chooserIntent, requestCode);
     }
 
     // Variable miembro para almacenar la URI de la imagen capturada por la cámara

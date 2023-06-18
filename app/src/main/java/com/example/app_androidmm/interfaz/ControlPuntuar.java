@@ -104,6 +104,9 @@ public class ControlPuntuar extends AppCompatActivity {
         condiciones = findViewById(R.id.spinnerSearchByP);
         listaPeliculas = new ArrayList();
         recyclerView = findViewById(R.id.recyclerView);
+        String queryRandom = "select * from pelicula where rating >= 8 order by random() limit 15";
+        buscar(queryRandom);
+
         btnBuscar.setOnClickListener(view -> {
             String busca = buscador.getText().toString();
             if (!busca.isEmpty()) {
@@ -136,119 +139,7 @@ public class ControlPuntuar extends AppCompatActivity {
                 }
 
                 String finalQuery = query;
-                new Thread(() -> {
-                    connectionManager.executeQuery(finalQuery, new ConnectionManager.QueryCallback() {
-                        @Override
-                        public void onQueryCompleted(ResultSet resultSet, int rowsAffected) {
-                            runOnUiThread(() -> {
-                                if (adaptadorPuntuar != null) {
-                                    adaptadorPuntuar.clearViews();
-                                    adaptadorPuntuar.notifyDataSetChanged();
-                                }
-                            });
-                            boolean resultados = false;
-                            try {
-                                while (resultSet.next()) {
-                                    Pelicula p = new Pelicula();
-                                    p.setPkPelicula(resultSet.getInt("pkpelicula"));
-                                    p.setTitulo(resultSet.getString("titulo"));
-                                    p.setDescripcion(resultSet.getString("descripcion"));
-                                    p.setRating((float) resultSet.getDouble("rating"));
-                                    p.setImagen(resultSet.getString("imagen"));
-                                    p.setGenero(resultSet.getString("genero"));
-                                    p.setCalificacion(resultSet.getString("calificacion"));
-                                    p.setDirector(resultSet.getString("director"));
-                                    p.setFechaPublicacion(resultSet.getDate("fechapublicacion"));
-                                    p.setProtagonista(resultSet.getString("protagonista"));
-                                    p.setPlataforma(resultSet.getString("plataforma"));
-                                    Log.d(TAG, p.toString());
-                                    listaPeliculas.add(p);
-                                    resultados = true;
-                                }
-                                System.out.println("Peliculas cargadas: " + rowsAffected);
-                                boolean finalResultados = resultados;
-                                runOnUiThread(() -> {
-                                    if (finalResultados) {
-
-                                        adaptadorPuntuar = new AdaptadorPuntuar(listaPeliculas);
-                                        recyclerView.setHasFixedSize(true);
-                                        recyclerView.setLayoutManager(new LinearLayoutManager(ControlPuntuar.this));
-
-                                        adaptadorPuntuar.setOnRatingClickListener((position, rating) -> {
-                                            pelicula = listaPeliculas.get(position);
-                                            pelicula.setRating(rating);
-                                            // Imprimir la calificación por pantalla para comprobar que se ha calificado correctamente
-                                            System.out.println("Puntuacion: " + rating);
-                                        });
-
-                                        adaptadorPuntuar.setOnCalificarClickListener((position, rating) -> {
-                                            // Manejo el evento de clic en el botón "CALIFICAR" aquí
-                                            pelicula = listaPeliculas.get(position);
-                                            pelicula.setRating(rating);
-                                            // Imprimir la calificación por pantalla para comprobar que se ha calificado correctamente
-                                            System.out.println("Calificación desde el botón CALIFICAR: " + rating);
-                                            float ratingEscalado = rating / (float) 5 * 10; // Valor a escalado a una puntuación sobre 10
-                                            // AQUI IRIA EL INSERT DE LA TABLA VISUALIZACION, AÑADIENDO LA CALIFICACION DEL USUARIO EN DICHA PELICULA
-                                            System.out.println("Calificación escaladada: " + ratingEscalado);
-                                            String insert = "INSERT INTO visualizacion (akusuario, fecha, ratingvista, akpelicula)\n" +
-                                                    "VALUES (" + user.getPkUsuario() + ", CURRENT_DATE, " + ratingEscalado + ", " + pelicula.getPkPelicula() + ") " +
-                                                    "ON CONFLICT (akusuario, akpelicula) DO UPDATE SET ratingvista = EXCLUDED.ratingvista, fecha = EXCLUDED.fecha;" +
-                                                    "UPDATE usuario SET verificado = true WHERE pkusuario = " + user.getPkUsuario() + " AND (SELECT COUNT(*) FROM visualizacion " +
-                                                    "WHERE akusuario = " + user.getPkUsuario() +") > 20 AND verificado = false;";
-                                            Log.d("Prueba", insert);
-                                            new Thread(() -> {
-                                                connectionManager.executeQuery(insert, new ConnectionManager.QueryCallback() {
-                                                    @Override
-                                                    public void onQueryCompleted(ResultSet resultSet, int rowsAffected) {
-                                                        System.out.println("Antes de puntuar");
-                                                        try {
-                                                            if (resultSet != null) {
-                                                                // Procesar los resultados de la consulta
-                                                                while (resultSet.next()) {
-                                                                    int akuser = resultSet.getInt("akusuario");
-                                                                    int akpelicula = resultSet.getInt("akpelicula");
-                                                                    float rating = resultSet.getFloat("ratingvista");
-
-                                                                    // Realizar cualquier acción con los datos obtenidos
-                                                                    Log.d(TAG, "Usuario: " + akuser + ", Pelicula: " + akpelicula + "Rating: " + rating);
-                                                                }
-                                                            } else {
-                                                                // Manejar casos de inserción o actualización (rowsAffected contiene el número de filas afectadas)
-                                                                Log.d(TAG, "Filas afectadas: " + rowsAffected);
-                                                                Log.d(TAG, "Query creada: " + insert);
-                                                                Toast.makeText(ControlPuntuar.this, "La película se ha puntuado con éxito. Puntuación: " + rating, Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        } catch (SQLException e) {
-                                                            Log.e(TAG, "Error al procesar los resultados: " + e.getMessage());
-                                                        }
-                                                        System.out.println("Después de puntuar");
-                                                    }
-
-                                                    @Override
-                                                    public void onQueryFailed(String error) {
-                                                        Log.e(TAG, "Error al procesar los resultados: " + error);
-                                                        Toast.makeText(ControlPuntuar.this, "Calificación: " + rating, Toast.LENGTH_SHORT).show();
-                                                    }
-                                                });
-                                            }).start();
-                                        });
-                                        recyclerView.setAdapter(adaptadorPuntuar);
-                                        adaptadorPuntuar.notifyDataSetChanged();
-                                    } else {
-                                        Toast.makeText(ControlPuntuar.this, "No se encontraron películas.", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            } catch (SQLException e) {
-                                Log.e(TAG, "Error al procesar los resultados: " + e.getMessage());
-                            }
-                        }
-
-                        @Override
-                        public void onQueryFailed(String error) {
-                            Log.e(TAG, error);
-                        }
-                    });
-                }).start();
+                buscar(finalQuery);
             } else {
                 Toast.makeText(ControlPuntuar.this, "Por favor, ingrese un término de búsqueda.", Toast.LENGTH_SHORT).show();
             }
@@ -262,5 +153,121 @@ public class ControlPuntuar extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         closeDrawer(drawerLayout);
+    }
+
+    private void buscar(String query) {
+        new Thread(() -> {
+            connectionManager.executeQuery(query, new ConnectionManager.QueryCallback() {
+                @Override
+                public void onQueryCompleted(ResultSet resultSet, int rowsAffected) {
+                    runOnUiThread(() -> {
+                        if (adaptadorPuntuar != null) {
+                            adaptadorPuntuar.clearViews();
+                            adaptadorPuntuar.notifyDataSetChanged();
+                        }
+                    });
+                    boolean resultados = false;
+                    try {
+                        while (resultSet.next()) {
+                            Pelicula p = new Pelicula();
+                            p.setPkPelicula(resultSet.getInt("pkpelicula"));
+                            p.setTitulo(resultSet.getString("titulo"));
+                            p.setDescripcion(resultSet.getString("descripcion"));
+                            p.setRating((float) resultSet.getDouble("rating"));
+                            p.setImagen(resultSet.getString("imagen"));
+                            p.setGenero(resultSet.getString("genero"));
+                            p.setCalificacion(resultSet.getString("calificacion"));
+                            p.setDirector(resultSet.getString("director"));
+                            p.setFechaPublicacion(resultSet.getDate("fechapublicacion"));
+                            p.setProtagonista(resultSet.getString("protagonista"));
+                            p.setPlataforma(resultSet.getString("plataforma"));
+                            Log.d(TAG, p.toString());
+                            listaPeliculas.add(p);
+                            resultados = true;
+                        }
+                        System.out.println("Peliculas cargadas: " + rowsAffected);
+                        boolean finalResultados = resultados;
+                        runOnUiThread(() -> {
+                            if (finalResultados) {
+
+                                adaptadorPuntuar = new AdaptadorPuntuar(listaPeliculas);
+                                recyclerView.setHasFixedSize(true);
+                                recyclerView.setLayoutManager(new LinearLayoutManager(ControlPuntuar.this));
+
+                                adaptadorPuntuar.setOnRatingClickListener((position, rating) -> {
+                                    pelicula = listaPeliculas.get(position);
+                                    pelicula.setRating(rating);
+                                    // Imprimir la calificación por pantalla para comprobar que se ha calificado correctamente
+                                    System.out.println("Puntuacion: " + rating);
+                                });
+
+                                adaptadorPuntuar.setOnCalificarClickListener((position, rating) -> {
+                                    // Manejo el evento de clic en el botón "CALIFICAR" aquí
+                                    pelicula = listaPeliculas.get(position);
+                                    pelicula.setRating(rating);
+                                    // Imprimir la calificación por pantalla para comprobar que se ha calificado correctamente
+                                    System.out.println("Calificación desde el botón CALIFICAR: " + rating);
+                                    float ratingEscalado = rating / (float) 5 * 10; // Valor a escalado a una puntuación sobre 10
+                                    // AQUI IRIA EL INSERT DE LA TABLA VISUALIZACION, AÑADIENDO LA CALIFICACION DEL USUARIO EN DICHA PELICULA
+                                    System.out.println("Calificación escaladada: " + ratingEscalado);
+                                    String insert = "INSERT INTO visualizacion (akusuario, fecha, ratingvista, akpelicula)\n" +
+                                            "VALUES (" + user.getPkUsuario() + ", CURRENT_DATE, " + ratingEscalado + ", " + pelicula.getPkPelicula() + ") " +
+                                            "ON CONFLICT (akusuario, akpelicula) DO UPDATE SET ratingvista = EXCLUDED.ratingvista, fecha = EXCLUDED.fecha;" +
+                                            "UPDATE usuario SET verificado = true WHERE pkusuario = " + user.getPkUsuario() + " AND (SELECT COUNT(*) FROM visualizacion " +
+                                            "WHERE akusuario = " + user.getPkUsuario() +") > 20 AND verificado = false;";
+                                    Log.d("Prueba", insert);
+                                    new Thread(() -> {
+                                        connectionManager.executeQuery(insert, new ConnectionManager.QueryCallback() {
+                                            @Override
+                                            public void onQueryCompleted(ResultSet resultSet, int rowsAffected) {
+                                                System.out.println("Antes de puntuar");
+                                                try {
+                                                    if (resultSet != null) {
+                                                        // Procesar los resultados de la consulta
+                                                        while (resultSet.next()) {
+                                                            int akuser = resultSet.getInt("akusuario");
+                                                            int akpelicula = resultSet.getInt("akpelicula");
+                                                            float rating = resultSet.getFloat("ratingvista");
+
+                                                            // Realizar cualquier acción con los datos obtenidos
+                                                            Log.d(TAG, "Usuario: " + akuser + ", Pelicula: " + akpelicula + "Rating: " + rating);
+                                                        }
+                                                    } else {
+                                                        // Manejar casos de inserción o actualización (rowsAffected contiene el número de filas afectadas)
+                                                        Log.d(TAG, "Filas afectadas: " + rowsAffected);
+                                                        Log.d(TAG, "Query creada: " + insert);
+                                                        Toast.makeText(ControlPuntuar.this, "La película se ha puntuado con éxito. Puntuación: " + rating, Toast.LENGTH_SHORT).show();
+                                                    }
+                                                } catch (SQLException e) {
+                                                    Log.e(TAG, "Error al procesar los resultados: " + e.getMessage());
+                                                }
+                                                System.out.println("Después de puntuar");
+                                            }
+
+                                            @Override
+                                            public void onQueryFailed(String error) {
+                                                Log.e(TAG, "Error al procesar los resultados: " + error);
+                                                Toast.makeText(ControlPuntuar.this, "Calificación: " + rating, Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    }).start();
+                                });
+                                recyclerView.setAdapter(adaptadorPuntuar);
+                                adaptadorPuntuar.notifyDataSetChanged();
+                            } else {
+                                Toast.makeText(ControlPuntuar.this, "No se encontraron películas.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } catch (SQLException e) {
+                        Log.e(TAG, "Error al procesar los resultados: " + e.getMessage());
+                    }
+                }
+
+                @Override
+                public void onQueryFailed(String error) {
+                    Log.e(TAG, error);
+                }
+            });
+        }).start();
     }
 }

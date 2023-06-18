@@ -15,7 +15,6 @@ import com.example.app_androidmm.database.Usuario;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static com.example.app_androidmm.utilidades.Utilidades.loadimageButtonFromUrl;
 import static com.example.app_androidmm.utilidades.Utilidades.*;
 
 
