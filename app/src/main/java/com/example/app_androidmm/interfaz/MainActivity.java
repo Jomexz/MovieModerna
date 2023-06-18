@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                     PERMISSION_REQUEST_INTERNET);
         } else {
             // Permiso ya concedido
-            Toast.makeText(MainActivity.this, "Permiso de acceso a Internet concedido", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(MainActivity.this, "Permiso de acceso a Internet concedido", Toast.LENGTH_SHORT).show();
             System.out.println("Permiso de acceso a Internet concedidoo0o0o0o0o0o!");
         }
 
@@ -121,8 +121,6 @@ public class MainActivity extends AppCompatActivity {
                             Log.d(TAG, user.toString());
                             // Verificar la contraseña
                             if (pass.equals(passUser)) {
-
-
                                 System.out.println("Se ha iniciado sesión");
                                 redirectActivity(MainActivity.this, ControlBienvenido.class);
                                 finish();

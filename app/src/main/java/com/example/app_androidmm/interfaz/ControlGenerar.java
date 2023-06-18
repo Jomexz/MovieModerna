@@ -69,6 +69,8 @@ public class ControlGenerar extends AppCompatActivity {
         navUser.setText(user.getAlias());
         navNombre.setText(user.getNombre() + " " + user.getApellidos());
 
+        Toast.makeText(this,"Espera mientras el recomendador trabaja ...",Toast.LENGTH_LONG).show();
+
         menu.setOnClickListener(view -> {
             openDrawer(drawerLayout);
         });
@@ -86,7 +88,7 @@ public class ControlGenerar extends AppCompatActivity {
         });
 
         logout.setOnClickListener(view -> {
-            Toast.makeText(this, "Has cerrado sesión correctamente", Toast.LENGTH_SHORT);
+            Toast.makeText(this, "Has cerrado sesión correctamente", Toast.LENGTH_SHORT).show();
             user = null; // Borramos los datos del usuario
             redirectActivity(this, MainActivity.class);
 

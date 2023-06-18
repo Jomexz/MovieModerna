@@ -79,7 +79,7 @@ public class ControlPuntuar extends AppCompatActivity {
         });
 
         logout.setOnClickListener(view -> {
-            Toast.makeText(this,"Has cerrado sesión correctamente", Toast.LENGTH_SHORT);
+            Toast.makeText(this,"Has cerrado sesión correctamente", Toast.LENGTH_SHORT).show();
             user = null; // Borramos los datos del usuario
             redirectActivity(this, MainActivity.class);
 
@@ -95,7 +95,7 @@ public class ControlPuntuar extends AppCompatActivity {
             if(intent.resolveActivity(getPackageManager()) != null) {
                 startActivity(intent);
             } else {
-                Toast.makeText(this,"No hay permisos", Toast.LENGTH_SHORT);
+                Toast.makeText(this,"No hay permisos", Toast.LENGTH_SHORT).show();
             }
         });
 

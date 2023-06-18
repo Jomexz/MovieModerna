@@ -71,7 +71,7 @@ public class ControlRecuperar extends AppCompatActivity {
                                     btnCambiarPass.setEnabled(true);
 
                                 } else {
-                                    Toast.makeText(ControlRecuperar.this, "No existe usuario con esta pregunta y respuesta de recuperación", Toast.LENGTH_SHORT);
+                                    Toast.makeText(ControlRecuperar.this, "No existe usuario con esta pregunta y respuesta de recuperación", Toast.LENGTH_SHORT).show();
                                 }
                             } catch (SQLException e) {
                                 Log.e(TAG, "Error al procesar los resultados: " + e.getMessage());
@@ -86,7 +86,7 @@ public class ControlRecuperar extends AppCompatActivity {
                 }).start();
 
             } else {
-                Toast.makeText(this, "No se ha introducido respuesta", Toast.LENGTH_SHORT);
+                Toast.makeText(this, "No se ha introducido respuesta", Toast.LENGTH_SHORT).show();
             }
         });
 
