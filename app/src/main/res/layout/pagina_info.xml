@@ -19,21 +19,31 @@
         <include layout="@layout/toolbar"/>
 
         <ScrollView android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:layout_marginTop="15dp">
+                    android:layout_marginTop="15dp">
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                           android:orientation="vertical">
                 <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                          android:text="SOBRE MI"
+                          android:text="SOBRE MOVIEMODERNA"
+                          android:layout_marginStart="10dp"
                           android:textColor="@color/white"
                           android:textSize="30dp"
                 />
                 <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                          android:text="Descripcion"
+                          android:layout_marginTop="20dp"
+                          android:layout_marginEnd="20dp"
+                          android:text="Sumérgete en un universo cinematográfico personalizado con nuestra aplicación móvil de recomendaciones de películas. Diseñada para cinéfilos apasionados, nuestra plataforma utiliza algoritmos matemáticos inteligentes para analizar tus preferencias y ofrecerte recomendaciones precisas y emocionantes.
+\n\nAdemás, garantizamos la confidencialidad de tus datos personales, los cuales solo se utilizarán para mejorar la calidad de nuestras sugerencias. Descarga nuestra app ahora mismo y descubre un sinfín de películas que se ajustan perfectamente a tu gusto.
+\n\n¡Explora nuevas historias, géneros y directores, y disfruta de una experiencia cinematográfica única en tu dispositivo móvil!"
+                          android:layout_marginStart="15dp"
                           android:textColor="@color/white"
                           android:textSize="20dp"
-
+                          android:justificationMode="inter_word"
                 />
+
+                <ImageView android:layout_width="315dp" android:layout_height="244dp"
+                           android:layout_gravity="center"
+                           android:layout_marginTop="20dp"
+                           android:src="@drawable/logo"/>
             </LinearLayout>
 
 

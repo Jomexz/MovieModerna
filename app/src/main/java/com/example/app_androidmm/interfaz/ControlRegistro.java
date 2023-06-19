@@ -161,13 +161,11 @@ public class ControlRegistro extends AppCompatActivity {
                                                 Log.d(TAG, "Usuario: " + alias + ", Pass: " + contrasena);
                                             }
                                         } else {
-                                            // Manejar casos de inserción o actualización (rowsAffected contiene el número de filas afectadas)
+                                            // Manejo de casos de inserción o actualización (rowsAffected contiene el número de filas afectadas)
                                             Log.d(TAG, "Usuario: " + user.toString());
-                                            Log.d("LATER QUERY", photoUri.toString());
                                             mostrarErrorCampo(ControlRegistro.this, "La cuenta se ha creado con éxito", "Creación de cuenta");
                                             Intent intent = new Intent(ControlRegistro.this, ControlBienvenido.class);
                                             startActivity(intent);
-                                            photoUri = null;
                                         }
                                     } catch (SQLException e) {
                                         Log.e(TAG, "Error al procesar los resultados: " + e.getMessage());
@@ -178,6 +176,20 @@ public class ControlRegistro extends AppCompatActivity {
                                 public void onQueryFailed(String error) {
                                     // Manejar el error de la consulta
                                     Log.e(TAG, error);
+
+                                    // Comprobar el tipo de error utilizando información adicional
+                                    if (error.contains("duplicate key value violates unique constraint")) {
+                                        if (error.contains("usuario_alias_key")) {
+                                            mostrarErrorCampo(ControlRegistro.this, "El alias ingresado ya existe. Por favor introduce otro.", "Error en la introducción de datos");
+                                        } else if (error.contains("usuario_email_key")) {
+                                            mostrarErrorCampo(ControlRegistro.this, "El correo electrónico ingresado corresponde a una cuenta ya existente. Por favor verifica e inicia sesión.", "Error en la introducción de datos");
+                                        } else if (error.contains("usuario_respuesta_key")) {
+                                            mostrarErrorCampo(ControlRegistro.this, "La respuesta de seguridad ingresada ya existe. Por favor elige otra para garantizar tu seguridad.", "Error en la introducción de datos");
+                                        }
+                                    } else {
+                                        // Manejar otros errores de consulta
+                                        mostrarErrorCampo(ControlRegistro.this, "Error en la introducción de datos", "Error en la consulta");
+                                    }
                                 }
                             });
                         }).start();
