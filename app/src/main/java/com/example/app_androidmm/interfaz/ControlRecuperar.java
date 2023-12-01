@@ -19,74 +19,57 @@ import static com.example.app_androidmm.utilidades.Utilidades.*;
 
 public class ControlRecuperar extends AppCompatActivity {
     private static String TAG = "RecuperarControl";
+    private String alias, respuesta, pregunta;
     private Button btnValidar, btnCambiarPass;
-    private EditText respuesta, newPass, newPassRepit;
+    private EditText edalias, edrespuesta, newPass, newPassRepit;
     private Spinner spPreguntas;
     private ConnectionManager connectionManager = new ConnectionManager();
-    private Usuario user = Usuario.getInstance();
-
+    private Usuario user = new Usuario();
     @SuppressLint("WrongThread")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pagina_recuperar);
 
+        edalias = findViewById(R.id.txtUsuario);
+        alias = edalias.getText().toString();
         btnValidar = findViewById(R.id.btnValidar);
         btnCambiarPass = findViewById(R.id.btnCambiar);
-        respuesta = findViewById(R.id.txtRespuesta);
+        edrespuesta = findViewById(R.id.txtRespuesta);
         newPass = findViewById(R.id.txtNewPass);
         newPassRepit = findViewById(R.id.txtNewPassRepit);
         spPreguntas = findViewById(R.id.cbPreguntas);
 
         btnValidar.setOnClickListener(view -> {
-            String resp = respuesta.getText().toString();
-            String pregunta = spPreguntas.getSelectedItem().toString();
+            respuesta = edrespuesta.getText().toString();
+            pregunta = spPreguntas.getSelectedItem().toString();
 
-            if (!resp.isEmpty()) {
-                new Thread(() -> {
-                    connectionManager.executeQuery("select * from usuario where pregunta like '" + pregunta + "' and respuesta like '" + resp + "'", new ConnectionManager.QueryCallback() {
-                        @Override
-                        public void onQueryCompleted(ResultSet resultSet, int rowsAffected) {
-                            boolean resultados = false;
-                            try {
-                                while (resultSet.next()) {
-                                    user.setAlias(resultSet.getString("alias"));
-                                    user.setPass(resultSet.getString("contrasena"));
-                                    user.setPkUsuario(resultSet.getInt("pkusuario"));
-                                    user.setEmail(resultSet.getString("email"));
-                                    user.setNombre(resultSet.getString("nombre"));
-                                    user.setApellidos(resultSet.getString("apellidos"));
-                                    user.setFechaNacimiento(resultSet.getDate("fechanace"));
-                                    user.setVerificado(resultSet.getBoolean("verificado"));
-                                    user.setPregunta(resultSet.getString("pregunta"));
-                                    user.setRespuesta(resultSet.getString("respuesta"));
-                                    user.setAvatar((resultSet.getString("avatar")));
-                                    Log.d(TAG, user.toString());
-                                    resultados = true;
-                                }
-                                if (resultados && pregunta.equals(user.getPregunta()) && resp.equalsIgnoreCase(user.getRespuesta())) {
-                                    System.out.println("Entra en el if!!!!");
-                                    newPass.setEnabled(true);
-                                    newPassRepit.setEnabled(true);
-                                    btnCambiarPass.setEnabled(true);
+            if (!respuesta.isEmpty() && !alias.isEmpty()) {
+                // Crear una instancia de UsuarioQuery que implementa la interfaz Query
+                Usuario.UsuarioQuery usuarioQuery = new Usuario.UsuarioQuery(alias);
 
-                                } else {
-                                    Toast.makeText(ControlRecuperar.this, "No existe usuario con esta pregunta y respuesta de recuperación", Toast.LENGTH_SHORT).show();
-                                }
-                            } catch (SQLException e) {
-                                Log.e(TAG, "Error al procesar los resultados: " + e.getMessage());
-                            }
+                // Ejecutar la consulta utilizando el ConnectionManager de Firebase
+                connectionManager.executeQuery(usuarioQuery, new ConnectionManager.QueryCallback<Usuario>() {
+                    @Override
+                    public void onQueryCompleted(Usuario userSesion) {
+                        user.actualizarDatos(userSesion);
+                        if (userSesion != null && pregunta.equals(userSesion.getPregunta()) && respuesta.equals(userSesion.getRespuesta())) {
+                            btnCambiarPass.setEnabled(true);
+                        } else {
+                            System.out.println("No se encontró un usuario con el alias proporcionado");
+                            // Manejar el caso cuando no se encuentra un usuario con el alias proporcionado
                         }
+                    }
 
-                        @Override
-                        public void onQueryFailed(String error) {
-                            Log.e(TAG, error);
-                        }
-                    });
-                }).start();
+                    @Override
+                    public void onQueryFailed(String error) {
+                        // Manejar el error de la consulta
+                        Log.e(TAG, error);
+                    }
+                });
 
             } else {
-                Toast.makeText(this, "No se ha introducido respuesta", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "No se ha introducido respuesta o usuario", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -95,39 +78,24 @@ public class ControlRecuperar extends AppCompatActivity {
                 HashMap<String, String> pass = new HashMap<>();
                 pass.put("pass", newPass.getText().toString());
                 if (validarFormulario(pass, this)) {
-                    new Thread(() -> {
-                        connectionManager.executeQuery("update usuario set contrasena='" + newPass.getText().toString() + "' where alias like '" + user.getAlias() + "'",
-                                new ConnectionManager.QueryCallback() {
-                                    @Override
-                                    public void onQueryCompleted(ResultSet resultSet, int rowsAffected) {
-                                        try {
-                                            if (resultSet != null) {
-                                                // Procesar los resultados de la consulta
-                                                while (resultSet.next()) {
-                                                    String alias = resultSet.getString("alias");
-                                                    String contrasena = resultSet.getString("contrasena");
+                    // Llamar al método para actualizar o insertar datos
+                    connectionManager.updateOrInsertData("usuarios", alias, user, new ConnectionManager.UpdateOrInsertCallback() {
+                        @Override
+                        public void onUpdateOrInsertCompleted() {
+                            // La actualización o inserción fue exitosa
+                            Log.d(TAG, "Datos actualizados o insertados correctamente en Firebase");
 
-                                                    // Realizar cualquier acción con los datos obtenidos
-                                                    Log.d(TAG, "Usuario: " + alias + ", Pass: " + contrasena);
-                                                }
-                                            } else {
-                                                // Manejar casos de inserción o actualización (rowsAffected contiene el número de filas afectadas)
-                                                Log.d(TAG, "Filas afectadas: " + rowsAffected);
-                                                mostrarErrorCampo(ControlRecuperar.this, "La cuenta se ha recuperado con éxito", "Recuperación de cuenta");
-                                                Intent intent = new Intent(ControlRecuperar.this, MainActivity.class);
-                                                startActivity(intent);
-                                            }
-                                        } catch (SQLException e) {
-                                            Log.e(TAG, "Error al procesar los resultados: " + e.getMessage());
-                                        }
-                                    }
+                            mostrarErrorCampo(ControlRecuperar.this,"Datos modificados correctamente.","Configuración de datos");
+                        }
 
-                                    @Override
-                                    public void onQueryFailed(String error) {
-                                        Log.e(TAG, error);
-                                    }
-                                });
-                    }).start();
+                        @Override
+                        public void onUpdateOrInsertFailed(String error) {
+                            // Ocurrió un error al actualizar o insertar los datos
+                            Log.e(TAG, "Error al actualizar o insertar datos en Firebase: " + error);
+
+                            mostrarErrorCampo(ControlRecuperar.this,error,"Recuperación de datos fallida");
+                        }
+                    });
                 }
             }
         });

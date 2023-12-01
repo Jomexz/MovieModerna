@@ -25,12 +25,23 @@
                 android:textColor="#FFFFFF"
                 android:textSize="24sp"/>
 
+        <EditText
+                android:id="@+id/txtUsuario"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:layout_below="@id/tvTitle"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/textview_background"
+                android:hint="  Nombre de usuario"
+                android:textColorHint="@color/pressed_color"
+                android:textColor="@color/black"/>
+
         <Spinner
                 android:id="@+id/cbPreguntas"
                 android:entries="@array/preguntas"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
-                android:layout_below="@id/tvTitle"
+                android:layout_below="@id/txtUsuario"
                 android:layout_marginTop="20dp"
                 android:spinnerMode="dropdown"
         style="@style/SpinnerDropdownStyle"/>
@@ -42,7 +53,7 @@
                 android:layout_below="@id/cbPreguntas"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/textview_background"
-                android:hint="Respuesta"
+                android:hint="  Respuesta"
                 android:textColorHint="@color/pressed_color"
                 android:textColor="@color/black"/>
         <Button

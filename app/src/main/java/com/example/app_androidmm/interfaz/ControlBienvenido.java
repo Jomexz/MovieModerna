@@ -51,46 +51,20 @@ public class ControlBienvenido extends AppCompatActivity {
         txtVerificado = findViewById(R.id.lblVerificado);
         imgPerfil = findViewById(R.id.imgAvatarC);
 
-        connectionManager.executeQuery("SELECT * FROM usuario where alias like '" + user.getAlias() + "'", new ConnectionManager.QueryCallback() {
-            @Override
-            public void onQueryCompleted(ResultSet resultSet, int rowsAffected) {
-                try {
-                    // Procesar los resultados de la consulta
-                    while (resultSet.next()) {
-                        user.setAlias(resultSet.getString("alias"));
-                        user.setPass(resultSet.getString("contrasena"));
-                        user.setPkUsuario(resultSet.getInt("pkusuario"));
-                        user.setEmail(resultSet.getString("email"));
-                        user.setNombre(resultSet.getString("nombre"));
-                        user.setApellidos(resultSet.getString("apellidos"));
-                        user.setFechaNacimiento(resultSet.getDate("fechanace"));
-                        user.setVerificado(resultSet.getBoolean("verificado"));
-                        user.setPregunta(resultSet.getString("pregunta"));
-                        user.setRespuesta(resultSet.getString("respuesta"));
-                        user.setAvatar((resultSet.getString("avatar")));
-                        runOnUiThread(() -> {
-                            textViewUser.setText(user.getAlias());
-                            loadImageFromUrl(user.getAvatar(), imgPerfil);
-                            loadImageFromUrl(user.getAvatar(), navAvatar);
-                            if (user.isVerificado()) {
-                                txtVerificado.setText("Verificado");
-                                int color = Color.parseColor("#FF8EFF0C");
-                                txtVerificado.setTextColor(color);
-                            }
-                        });
-                        Log.d(TAG, user.toString());
-                    }
-                } catch (SQLException e) {
-                    Log.e(TAG, "Error al procesar los resultados: " + e.getMessage());
-                }
+        // Usar los datos ya existentes en el objeto user
+        runOnUiThread(() -> {
+            textViewUser.setText(user.getAlias());
+            loadImageFromUrl(user.getAvatar(), imgPerfil);
+            loadImageFromUrl(user.getAvatar(), navAvatar);
+            if (user.isVerificado()) {
+                txtVerificado.setText("Verificado");
+                int color = Color.parseColor("#FF8EFF0C");
+                txtVerificado.setTextColor(color);
             }
 
-            @Override
-            public void onQueryFailed(String error) {
-                // Manejar el error de la consulta
-                Log.e(TAG, error);
-            }
+            Log.d(TAG, user.toString());
         });
+
 
         menu.setOnClickListener(view -> {
             openDrawer(drawerLayout);

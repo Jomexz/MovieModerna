@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText edUser, edpass;
     private String alias, pass;
     private ConnectionManager connectionManager = new ConnectionManager();
-    String userName = "", passUser = "";
+    private Usuario user = Usuario.getInstance();
 
     @SuppressLint("WrongThread")
     @Override
@@ -96,43 +96,34 @@ public class MainActivity extends AppCompatActivity {
                 mostrarErrorCampo(this, "Algún campo vacío.", "Error en la introducción de datos");
                 return;
             }
-            Usuario user = Usuario.getInstance();
 
             Long tiempo = System.currentTimeMillis();
-            connectionManager.executeQuery("SELECT * FROM usuario where alias like '" + alias + "'", new ConnectionManager.QueryCallback() {
+            // Crear una instancia de UsuarioQuery que implementa la interfaz Query
+            Usuario.UsuarioQuery usuarioQuery = new Usuario.UsuarioQuery(alias);
+
+            // Ejecutar la consulta utilizando el ConnectionManager de Firebase
+            connectionManager.executeQuery(usuarioQuery, new ConnectionManager.QueryCallback<Usuario>() {
                 @Override
-                public void onQueryCompleted(ResultSet resultSet, int rowsAffected) {
-                    try {
-                        // Procesar los resultados de la consulta
-                        while (resultSet.next()) {
-                            userName = resultSet.getString("alias");
-                            passUser = resultSet.getString("contrasena");
-                            user.setAlias(userName);
-                            user.setPass(passUser);
-                            user.setPkUsuario(resultSet.getInt("pkusuario"));
-                            user.setEmail(resultSet.getString("email"));
-                            user.setNombre(resultSet.getString("nombre"));
-                            user.setApellidos(resultSet.getString("apellidos"));
-                            user.setFechaNacimiento(resultSet.getDate("fechanace"));
-                            user.setVerificado(resultSet.getBoolean("verificado"));
-                            user.setPregunta(resultSet.getString("pregunta"));
-                            user.setRespuesta(resultSet.getString("respuesta"));
-                            user.setAvatar((resultSet.getString("avatar")));
-                            Log.d(TAG, user.toString());
-                            // Verificar la contraseña
-                            if (pass.equals(passUser)) {
-                                System.out.println("Se ha iniciado sesión");
-                                redirectActivity(MainActivity.this, ControlBienvenido.class);
-                                finish();
-                            } else {
-                                System.out.println("No se ha inciado sesión");
-                                mostrarErrorCampo(MainActivity.this, "Contraseña o usuario incorrectos.", "Error en la introducción de datos");
-                            }
+                public void onQueryCompleted(Usuario userSesion) {
+                    if (userSesion != null) {
+                        // Actualización de datos
+                        user.actualizarDatos(userSesion);
+
+                        Log.d(TAG, user.toString());
+
+                        // Verificar la contraseña
+                        if (pass.equals(userSesion.getPass())) {
+                            System.out.println("Se ha iniciado sesión");
+                            redirectActivity(MainActivity.this, ControlBienvenido.class);
+                            finish();
+                        } else {
+                            System.out.println("No se ha iniciado sesión");
+                            mostrarErrorCampo(MainActivity.this, "Contraseña o usuario incorrectos.", "Error en la introducción de datos");
                         }
-                    } catch (SQLException e) {
-                        Log.e(TAG, "Error al procesar los resultados: " + e.getMessage());
+                    } else {
+                        System.out.println("No se encontró un usuario con el alias proporcionado");
+                        // Manejar el caso cuando no se encuentra un usuario con el alias proporcionado
                     }
-                    System.out.println("Tiempo hilo: " + (System.currentTimeMillis() - tiempo));
                 }
 
                 @Override
@@ -141,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.e(TAG, error);
                 }
             });
+
             System.out.println("Tiempo fuera:" + (System.currentTimeMillis() - tiempo));
 
 

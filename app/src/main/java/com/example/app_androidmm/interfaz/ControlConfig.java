@@ -37,7 +37,7 @@ public class ControlConfig extends AppCompatActivity {
     private Button btnAvatar, btnConfigurar;
     private ImageView imgAvatarConfig;
     private EditText txtAliasConfig, txtNombreConfig, txtApellidosconfig, txtPassConfig, txtConfirmPassConfig;
-    private String alias, nombre, apellidos, pass, newPass;
+    private String alias, nombre, apellidos, pass, confirmPass;
     private ConnectionManager connectionManager = new ConnectionManager();
     private Usuario user = Usuario.getInstance();
     private Uri imageUri;
@@ -84,7 +84,7 @@ public class ControlConfig extends AppCompatActivity {
             nombre = txtNombreConfig.getText().toString();
             apellidos = txtApellidosconfig.getText().toString();
             pass = txtPassConfig.getText().toString();
-            newPass = txtConfirmPassConfig.getText().toString();
+            confirmPass = txtConfirmPassConfig.getText().toString();
             // Crear lista para verificar datos
             HashMap<String, String> datos = new HashMap<>();
             datos.put("alias", alias);
@@ -92,73 +92,43 @@ public class ControlConfig extends AppCompatActivity {
             datos.put("nombre", nombre);
             datos.put("apellidos", apellidos);
             datos.put("email", "");
-            // Crear la consulta SQL para actualizar los datos del usuario
-            StringBuilder sqlBuilder = new StringBuilder("UPDATE usuario SET");
 
             // Verificar y agregar los campos que se deben actualizar
             if (validarFormulario(datos, ControlConfig.this)) {
-                List<String> updateFields = new ArrayList<>();
-                if (!alias.isEmpty()) {
-                    updateFields.add("alias = '" + alias + "'");
-                }
-                if (!nombre.isEmpty()) {
-                    updateFields.add("nombre = '" + nombre + "'");
-                }
-                if (!apellidos.isEmpty()) {
-                    updateFields.add("apellidos = '" + apellidos + "'");
-                }
-                if (!pass.isEmpty() && (pass.equals(newPass))) {
-                    updateFields.add("contrasena = '" + pass + "'");
+                Usuario usuarioActualizado = new Usuario();
+                usuarioActualizado.setAlias(alias);
+                usuarioActualizado.setNombre(nombre);
+                usuarioActualizado.setApellidos(apellidos);
+                if(pass.equals(confirmPass)) {
+                    usuarioActualizado.setPass(confirmPass);
+                } else {
+                    mostrarErrorCampo(this,"Las contraseñas introducidas no coinciden.","Contraseña incorrecta");
                 }
                 if (cambioFoto[0]) {
-                    updateFields.add("avatar = '" + user.getAvatar() + "'");
+                    usuarioActualizado.setAvatar(user.getAvatar());
                 }
-
-                // Combinar los campos en la consulta SQL
-                for (int i = 0; i < updateFields.size(); i++) {
-                    sqlBuilder.append(" ").append(updateFields.get(i));
-                    if (i < updateFields.size() - 1) {
-                        sqlBuilder.append(",");
-                    }
-                }
-            }
-            System.out.println(sqlBuilder);
-            new Thread(() -> {
-                // Llamar al método executeQuery desde aquí
-                connectionManager.executeQuery(String.valueOf(sqlBuilder), new ConnectionManager.QueryCallback() {
+                // Llamar al método para actualizar o insertar datos
+                connectionManager.updateOrInsertData("usuarios", user.getAlias(), usuarioActualizado, new ConnectionManager.UpdateOrInsertCallback() {
                     @Override
-                    public void onQueryCompleted(ResultSet resultSet, int rowsAffected) {
-                        try {
-                            if (resultSet != null) {
-                                // Procesar los resultados de la consulta
-                                while (resultSet.next()) {
-                                    String alias = resultSet.getString("alias");
-                                    String contrasena = resultSet.getString("contrasena");
+                    public void onUpdateOrInsertCompleted() {
+                        // La actualización o inserción fue exitosa
+                        Log.d(TAG, "Datos actualizados o insertados correctamente en Firebase");
 
-                                    // Realizar cualquier acción con los datos obtenidos
-                                    Log.d(TAG, "Usuario: " + alias + ", Pass: " + contrasena);
-                                }
-                            } else {
-                                // Manejar casos de inserción o actualización (rowsAffected contiene el número de filas afectadas)
-                                Log.d(TAG, "Usuario: " + user.toString());
-                                Log.d("LATER QUERY", photoUri.toString());
-                                mostrarErrorCampo(ControlConfig.this, "La cuenta se ha actualizado con éxito", "Configuración de cuenta");
-                                Intent intent = new Intent(ControlConfig.this, ControlBienvenido.class);
-                                startActivity(intent);
-                                photoUri = null;
-                            }
-                        } catch (SQLException e) {
-                            Log.e(TAG, "Error al procesar los resultados: " + e.getMessage());
-                        }
+                        mostrarErrorCampo(ControlConfig.this,"Datos modificados correctamente.","Configuración de datos");
                     }
 
                     @Override
-                    public void onQueryFailed(String error) {
-                        // Manejar el error de la consulta
-                        Log.e(TAG, error);
+                    public void onUpdateOrInsertFailed(String error) {
+                        // Ocurrió un error al actualizar o insertar los datos
+                        Log.e(TAG, "Error al actualizar o insertar datos en Firebase: " + error);
+
+                        mostrarErrorCampo(ControlConfig.this,error,"Configuración de datos incorrecta");
                     }
                 });
-            }).start();
+            } else {
+                // Los datos no son válidos, manejar según tus necesidades
+                Log.e(TAG, "Los datos no son válidos. La actualización no se realizará.");
+            }
 
         });
 

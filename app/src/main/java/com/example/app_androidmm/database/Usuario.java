@@ -17,7 +17,7 @@ public class Usuario {
     private String pregunta, respuesta;
 
     // Constructor vacío
-    private Usuario() {
+    public Usuario() {
     }
 
     public static Usuario getInstance() {
@@ -52,6 +52,20 @@ public class Usuario {
         this.respuesta = respuesta;
     }
 
+    // Método para actualizar los campos con nuevos valores
+    public void actualizarDatos(Usuario nuevoUsuario) {
+        this.alias = nuevoUsuario.getAlias();
+        this.pass = nuevoUsuario.getPass();
+        this.pkUsuario = nuevoUsuario.getPkUsuario();
+        this.email = nuevoUsuario.getEmail();
+        this.nombre = nuevoUsuario.getNombre();
+        this.apellidos = nuevoUsuario.getApellidos();
+        this.fechaNacimiento = nuevoUsuario.getFechaNacimiento();
+        this.verificado = nuevoUsuario.isVerificado();
+        this.pregunta = nuevoUsuario.getPregunta();
+        this.respuesta = nuevoUsuario.getRespuesta();
+        this.avatar = nuevoUsuario.getAvatar();
+    }
     public int getPkUsuario() {
         return pkUsuario;
     }
@@ -154,4 +168,24 @@ public class Usuario {
                 ", respuesta='" + respuesta + '\'' +
                 '}';
     }
+
+    public static class UsuarioQuery implements ConnectionManager.Query<Usuario> {
+        private String id;
+
+        public UsuarioQuery(String id) {
+            this.id = id;
+        }
+
+        @Override
+        public String getNode() {
+            return "usuarios/" + id;
+        }
+
+        @Override
+        public Class<Usuario> getDataClass() {
+            return Usuario.class;
+        }
+    }
 }
+
+

@@ -4,11 +4,8 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import com.google.firebase.database.*;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -19,6 +16,8 @@ public class ConnectionManager {
     private ExecutorService executorService;
     private HandlerThread handlerThread;
     private Handler handler;
+
+    private DatabaseReference databaseReference;
 
     public ConnectionManager() {
         executorService = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
@@ -35,55 +34,83 @@ public class ConnectionManager {
                 }
             }
         };
+
+        // Obtener la referencia de la base de datos de Firebase
+        databaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
-    public void executeQuery(String query, QueryCallback callback) {
-        QueryTask queryTask = new QueryTask(query, callback);
+    public <T> void executeQuery(Query<T> query, QueryCallback<T> callback) {
+        QueryTask<T> queryTask = new QueryTask<>(query, callback);
         handler.sendMessage(handler.obtainMessage(MESSAGE_QUERY, queryTask));
     }
 
-    private void executeQuery(QueryTask queryTask) {
-        try (Connection connection = DriverManager.getConnection(queryTask.URL, queryTask.USER, queryTask.PASS);
-             Statement statement = connection.createStatement()) {
+    private <T> void executeQuery(QueryTask<T> queryTask) {
+        // Realizar operaciones en la base de datos de Firebase
+        // Aquí deberías implementar lógica específica para tu aplicación
 
-            boolean isResultSet = statement.execute(queryTask.query);
+        // Ejemplo: Obtener datos de Firebase
+        databaseReference.child(queryTask.query.getNode()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Manejar los datos obtenidos
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        // Procesar los resultados de la consulta
+                        T result = snapshot.getValue(queryTask.query.getDataClass());
 
-            if (isResultSet) {
-                try (ResultSet resultSet = statement.getResultSet()) {
-                    queryTask.callback.onQueryCompleted(resultSet, -1);
-
+                        // Notificar al callback
+                        queryTask.callback.onQueryCompleted(result);
+                    }
+                } else {
+                    // No se encontraron datos para la consulta
+                    queryTask.callback.onQueryCompleted(null);
                 }
-            } else {
-                int rowsAffected = statement.getUpdateCount();
-                queryTask.callback.onQueryCompleted(null, rowsAffected);
             }
-        } catch (SQLException e) {
-            queryTask.callback.onQueryFailed(e.getMessage());
-        }
-    }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Manejar errores
+                queryTask.callback.onQueryFailed(databaseError.getMessage());
+            }
+        });
+    }
 
     public void shutdown() {
         executorService.shutdown();
         handlerThread.quit();
     }
 
-    private static class QueryTask {
-        final String URL = "jdbc:postgresql://rogue.db.elephantsql.com:5432/leenvhud";
-        final String USER = "leenvhud";
-        final String PASS = "VciE8aoGHK7o1vQDfVZWo-TKQh5_nXFs";
-        String query;
-        QueryCallback callback;
+    private static class QueryTask<T> {
+        Query<T> query;
+        QueryCallback<T> callback;
 
-        public QueryTask(String query, QueryCallback callback) {
+        public QueryTask(Query<T> query, QueryCallback<T> callback) {
             this.query = query;
             this.callback = callback;
         }
     }
 
-    public interface QueryCallback {
-        void onQueryCompleted(ResultSet resultSet, int rowsAffected);
+    public interface Query<T> {
+        String getNode(); // Obtener el nodo en Firebase
+        Class<T> getDataClass(); // Obtener la clase de datos para deserialización
+    }
 
-        void onQueryFailed(String error);
+    public interface QueryCallback<T> {
+        void onQueryCompleted(T result); // Notificar cuando la consulta se haya completado
+        void onQueryFailed(String error); // Notificar si la consulta falla
+    }
+
+    public <T> void updateOrInsertData(String node, String key, T data, UpdateOrInsertCallback callback) {
+        DatabaseReference dataRef = databaseReference.child(node).child(key);
+
+        // Actualizar o insertar datos
+        dataRef.setValue(data)
+                .addOnSuccessListener(aVoid -> callback.onUpdateOrInsertCompleted())
+                .addOnFailureListener(e -> callback.onUpdateOrInsertFailed(e.getMessage()));
+    }
+
+    public interface UpdateOrInsertCallback {
+        void onUpdateOrInsertCompleted(); // Notificar cuando la actualización o inserción se haya completado
+        void onUpdateOrInsertFailed(String error); // Notificar si la actualización o inserción falla
     }
 }

@@ -63,7 +63,7 @@ public class ControlRegistro extends AppCompatActivity {
     private HashMap<String, String> datosUser = new HashMap<>();
     private ActivityResultLauncher<Intent> imagePickerLauncher;
     private String urlImagen = "https://firebasestorage.googleapis.com/v0/b/moviemoderna.appspot.com/o/avatar%2Fuser.jpg?alt=media&token=8191eb8a-a28d-45b7-80b2-20a859d7dcc8";
-    private Usuario user = Usuario.getInstance();
+    private Usuario user = new Usuario();
     private Uri imageUri;
     private ConnectionManager connectionManager = new ConnectionManager();
 
@@ -93,6 +93,7 @@ public class ControlRegistro extends AppCompatActivity {
         imageButton.setOnClickListener(v -> mostrarDateDialog(ControlRegistro.this, calendar, dtFechaNac, textViewFecha, dateFormat));
 
         btnRegistro = findViewById(R.id.btnRegistrarse);
+
         btnRegistro.setOnClickListener(view -> {
             edalias = findViewById(R.id.txtAlias);
             alias = edalias.getText().toString();
@@ -143,56 +144,24 @@ public class ControlRegistro extends AppCompatActivity {
                         //iniciarConsulta
 
                         String finalFecha = fecha;
-                        new Thread(() -> {
-                            // Llamar al método executeQuery desde aquí
-                            String query = "INSERT INTO usuario (alias, contrasena, nombre, apellidos, fechanace, email, avatar, pregunta, respuesta) VALUES ('" +
-                                    alias + "','" + user.getPass() + "','" + nombre + "','" + apellidos + "','" + finalFecha + "','" + email + "','" + user.getAvatar() + "','" + pregunta + "','" + respuesta + "')";
-                            connectionManager.executeQuery(query, new ConnectionManager.QueryCallback() {
-                                @Override
-                                public void onQueryCompleted(ResultSet resultSet, int rowsAffected) {
-                                    try {
-                                        if (resultSet != null) {
-                                            // Procesar los resultados de la consulta
-                                            while (resultSet.next()) {
-                                                String alias = resultSet.getString("alias");
-                                                String contrasena = resultSet.getString("contrasena");
+                        // Llamar al método para actualizar o insertar datos
+                        connectionManager.updateOrInsertData("usuarios", user.getAlias(), user, new ConnectionManager.UpdateOrInsertCallback() {
+                            @Override
+                            public void onUpdateOrInsertCompleted() {
+                                // La actualización o inserción fue exitosa
+                                Log.d(TAG, "Datos actualizados o insertados correctamente en Firebase");
 
-                                                // Realizar cualquier acción con los datos obtenidos
-                                                Log.d(TAG, "Usuario: " + alias + ", Pass: " + contrasena);
-                                            }
-                                        } else {
-                                            // Manejo de casos de inserción o actualización (rowsAffected contiene el número de filas afectadas)
-                                            Log.d(TAG, "Usuario: " + user.toString());
-                                            mostrarErrorCampo(ControlRegistro.this, "La cuenta se ha creado con éxito", "Creación de cuenta");
-                                            Intent intent = new Intent(ControlRegistro.this, ControlBienvenido.class);
-                                            startActivity(intent);
-                                        }
-                                    } catch (SQLException e) {
-                                        Log.e(TAG, "Error al procesar los resultados: " + e.getMessage());
-                                    }
-                                }
+                                mostrarErrorCampo(ControlRegistro.this,"Te has registrado correctamente.","Registro");
+                            }
 
-                                @Override
-                                public void onQueryFailed(String error) {
-                                    // Manejar el error de la consulta
-                                    Log.e(TAG, error);
+                            @Override
+                            public void onUpdateOrInsertFailed(String error) {
+                                // Ocurrió un error al actualizar o insertar los datos
+                                Log.e(TAG, "Error al actualizar o insertar datos en Firebase: " + error);
 
-                                    // Comprobar el tipo de error utilizando información adicional
-                                    if (error.contains("duplicate key value violates unique constraint")) {
-                                        if (error.contains("usuario_alias_key")) {
-                                            mostrarErrorCampo(ControlRegistro.this, "El alias ingresado ya existe. Por favor introduce otro.", "Error en la introducción de datos");
-                                        } else if (error.contains("usuario_email_key")) {
-                                            mostrarErrorCampo(ControlRegistro.this, "El correo electrónico ingresado corresponde a una cuenta ya existente. Por favor verifica e inicia sesión.", "Error en la introducción de datos");
-                                        } else if (error.contains("usuario_respuesta_key")) {
-                                            mostrarErrorCampo(ControlRegistro.this, "La respuesta de seguridad ingresada ya existe. Por favor elige otra para garantizar tu seguridad.", "Error en la introducción de datos");
-                                        }
-                                    } else {
-                                        // Manejar otros errores de consulta
-                                        mostrarErrorCampo(ControlRegistro.this, "Error en la introducción de datos", "Error en la consulta");
-                                    }
-                                }
-                            });
-                        }).start();
+                                mostrarErrorCampo(ControlRegistro.this,error,"Registro");
+                            }
+                        });
                     }
                 }
             }

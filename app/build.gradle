@@ -63,6 +63,8 @@ dependencies {
     // When using the BoM, don't specify versions in Firebase dependencies
     implementation 'com.google.firebase:firebase-analytics'
 
+    implementation 'com.google.firebase:firebase-database:20.2.2'
+
     // Dependencia de JUnit 4
     testImplementation 'junit:junit:4.13.2'
 
